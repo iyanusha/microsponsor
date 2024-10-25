@@ -1,5 +1,5 @@
-;; MicroSponsor Smart Contract v2.0
-;; Enhanced security implementation for scholarship management
+;; MicroSponsor Smart Contract v2.1
+;; Enhanced security implementation for scholarship management with fixed string handling
 
 ;; ---------- Constants ----------
 
@@ -29,18 +29,6 @@
 
 ;; Required number of admin signatures for critical operations
 (define-data-var required-signatures uint u2)
-
-;; Pending admin actions for multi-sig
-(define-map PendingAdminActions
-    uint 
-    {
-        action-type: (string-ascii 50),
-        proposed-by: principal,
-        approvals: uint,
-        expiration: uint,
-        executed: bool
-    }
-)
 
 ;; Counter for admin actions
 (define-data-var admin-action-counter uint u0)
@@ -97,14 +85,15 @@
     }
 )
 
-;; Activity tracking for security monitoring
+;; Updated ActivityLog with optional scholarship ID
 (define-map ActivityLog
     uint
     {
         actor: principal,
         action: (string-ascii 50),
         timestamp: uint,
-        details: (string-ascii 200)
+        details: (string-ascii 200),
+        related-scholarship: (optional uint)
     }
 )
 
@@ -118,6 +107,7 @@
     (var-get contract-enabled)
 )
 
+;; Updated log-activity function with optional scholarship ID
 (define-private (log-activity (actor principal) (action (string-ascii 50)) (details (string-ascii 200)))
     (let
         (
@@ -130,7 +120,34 @@
                     actor: actor,
                     action: action,
                     timestamp: block-height,
-                    details: details
+                    details: details,
+                    related-scholarship: none
+                }
+            )
+            activity-id
+        )
+    )
+)
+
+;; New function for logging scholarship-specific activities
+(define-private (log-scholarship-activity 
+    (actor principal) 
+    (action (string-ascii 50)) 
+    (details (string-ascii 200))
+    (scholarship-id uint))
+    (let
+        (
+            (activity-id (+ (var-get admin-action-counter) u1))
+        )
+        (begin
+            (var-set admin-action-counter activity-id)
+            (map-set ActivityLog activity-id
+                {
+                    actor: actor,
+                    action: action,
+                    timestamp: block-height,
+                    details: details,
+                    related-scholarship: (some scholarship-id)
                 }
             )
             activity-id
@@ -222,6 +239,14 @@
             (asserts! (get verified (unwrap! (map-get? Students student-address) ERR-NOT-FOUND)) ERR-STUDENT-NOT-VERIFIED)
             (var-set admin-action-counter scholarship-id)
             (try! (stx-transfer? amount tx-sender (as-contract tx-sender)))
+            
+            ;; Log scholarship creation
+            (log-scholarship-activity 
+                tx-sender 
+                "SCHOLARSHIP_CREATED" 
+                "New scholarship created"
+                scholarship-id)
+
             (ok (map-set Scholarships scholarship-id {
                 donor: tx-sender,
                 student: student-address,
@@ -240,9 +265,47 @@
 
 ;; ---------- Milestone Management Functions ----------
 
-(define-public (verify-milestone (scholarship-id uint) 
-                               (milestone-id uint)
-                               (evidence-hash (buff 32)))
+(define-public (add-milestone 
+    (scholarship-id uint)
+    (milestone-id uint)
+    (description (string-ascii 200))
+    (amount uint))
+    (let
+        (
+            (scholarship (unwrap! (map-get? Scholarships scholarship-id) ERR-NOT-FOUND))
+        )
+        (begin
+            (asserts! (is-contract-enabled) ERR-CONTRACT-PAUSED)
+            (asserts! (is-eq tx-sender (get donor scholarship)) ERR-NOT-AUTHORIZED)
+            (asserts! (verify-amount amount) ERR-INVALID-PARAMS)
+            
+            ;; Log milestone creation
+            (log-scholarship-activity 
+                tx-sender 
+                "MILESTONE_ADDED" 
+                description
+                scholarship-id)
+
+            (ok (map-set Milestones 
+                {scholarship-id: scholarship-id, milestone-id: milestone-id}
+                {
+                    description: description,
+                    amount: amount,
+                    completed: false,
+                    verified: false,
+                    completion-time: u0,
+                    verification-time: u0,
+                    verifier: tx-sender,
+                    evidence-hash: 0x00
+                }))
+        )
+    )
+)
+
+(define-public (verify-milestone 
+    (scholarship-id uint) 
+    (milestone-id uint)
+    (evidence-hash (buff 32)))
     (let
         (
             (scholarship (unwrap! (map-get? Scholarships scholarship-id) ERR-NOT-FOUND))
@@ -263,6 +326,13 @@
                 (get amount milestone)
                 tx-sender
                 (get student scholarship))))
+
+            ;; Log milestone verification
+            (log-scholarship-activity 
+                tx-sender 
+                "MILESTONE_VERIFIED" 
+                "Milestone verified and funds released"
+                scholarship-id)
 
             ;; Update milestone
             (ok (map-set Milestones 
@@ -292,8 +362,14 @@
                 remaining-amount
                 tx-sender
                 (get fund-recovery-address scholarship))))
-            (log-activity tx-sender "EMERGENCY_RECOVERY" 
-                (concat "Scholarship ID: " (to-ascii scholarship-id)))
+
+            ;; Log emergency recovery
+            (log-scholarship-activity 
+                tx-sender 
+                "EMERGENCY_RECOVERY" 
+                "Emergency fund recovery executed"
+                scholarship-id)
+
             (ok true)
         )
     )
@@ -303,6 +379,18 @@
 
 (define-read-only (get-contract-status)
     (var-get contract-enabled)
+)
+
+(define-read-only (get-student-info (student-address principal))
+    (map-get? Students student-address)
+)
+
+(define-read-only (get-scholarship-info (scholarship-id uint))
+    (map-get? Scholarships scholarship-id)
+)
+
+(define-read-only (get-milestone-info (scholarship-id uint) (milestone-id uint))
+    (map-get? Milestones {scholarship-id: scholarship-id, milestone-id: milestone-id})
 )
 
 (define-read-only (get-activity-log (activity-id uint))
