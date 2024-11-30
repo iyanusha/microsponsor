@@ -20,12 +20,12 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // In a real application, you would get this from your authentication state
+    // Note that: In a real application, you would get this from your authentication state
     const userSession = {
       loadUserData: () => ({
         profile: {
           stxAddress: {
-            testnet: 'TEST_ADDRESS', // Replace with actual address
+            testnet: 'TEST_ADDRESS', // Replaced with actual address in local testing
           },
         },
       }),
@@ -46,7 +46,7 @@ export default function Dashboard() {
         milestonesCompleted: 2,
         totalMilestones: 5,
       },
-      // Add more mock data as needed
+      // Add more mock data as needed ;;;;;;
     ];
     setScholarships(mockScholarships);
     setLoading(false);
