@@ -4,7 +4,7 @@ import { StacksNetwork, StacksMainnet, StacksTestnet } from '@stacks/network';
 
 const ConnectWallet = () => {
   const [address, setAddress] = useState('');
-  const network = new StacksTestnet(); // Will change to StacksMainnet for production
+  const network = new StacksTestnet(); // Change to StacksMainnet for production
 
   const connect = useCallback(() => {
     showConnect({

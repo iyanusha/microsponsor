@@ -20,7 +20,7 @@ const ScholarshipForm = () => {
     const functionArgs = [
       standardPrincipalCV(formData.studentAddress),
       uintCV(parseInt(formData.milestoneCount)),
-      standardPrincipalCV(formData.studentAddress), // fund recovery address
+      standardPrincipalCV(formData.studentAddress), // will fund recovery address
       stringAsciiCV(formData.category)
     ];
 
