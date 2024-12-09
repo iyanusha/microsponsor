@@ -382,28 +382,29 @@
 ;; Public Functions - Scholarship Management
 ;; ============================================
 
-(define-public (create-scholarship 
-    (student-address principal) 
+(define-public (create-scholarship
+    (student-address principal)
+    (amount uint)
     (milestone-count uint)
     (fund-recovery-address principal)
     (category (string-ascii 50)))
     (let
         (
             (scholarship-id (+ (var-get admin-action-counter) u1))
-            (amount (stx-get-balance tx-sender))
         )
         (begin
             (asserts! (is-contract-enabled) ERR-CONTRACT-PAUSED)
             (asserts! (verify-amount amount) ERR-INVALID-AMOUNT)
+            (asserts! (> milestone-count u0) ERR-INVALID-PARAMS)
             (asserts! (is-some (map-get? Students student-address)) ERR-NOT-FOUND)
-            (asserts! (get verified (unwrap! (map-get? Students student-address) ERR-NOT-FOUND)) 
+            (asserts! (get verified (unwrap! (map-get? Students student-address) ERR-NOT-FOUND))
                      ERR-STUDENT-NOT-VERIFIED)
-            
+
             (var-set admin-action-counter scholarship-id)
             (try! (stx-transfer? amount tx-sender (as-contract tx-sender)))
             (try! (update-donor-metrics tx-sender amount))
             (try! (log-activity tx-sender "SCHOLARSHIP_CREATED" category "SCHOLARSHIP" "MEDIUM"))
-            
+
             (ok (map-set Scholarships scholarship-id
                 {
                     donor: tx-sender,
