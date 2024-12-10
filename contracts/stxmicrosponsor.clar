@@ -352,6 +352,26 @@
     )
 )
 
+(define-public (verify-student (student-address principal))
+    (let
+        (
+            (student (unwrap! (map-get? Students student-address) ERR-NOT-FOUND))
+        )
+        (begin
+            (asserts! (is-admin tx-sender) ERR-NOT-AUTHORIZED)
+            (asserts! (not (get verified student)) ERR-ALREADY-EXISTS)
+            (try! (log-activity tx-sender "STUDENT_VERIFIED" (get name student) "STUDENT" "MEDIUM"))
+            (ok (map-set Students student-address
+                (merge student {
+                    verified: true,
+                    verification-time: block-height,
+                    verification-admin: tx-sender,
+                    status: "active"
+                })))
+        )
+    )
+)
+
 (define-public (update-student-metrics
     (student-address principal)
     (gpa uint)
