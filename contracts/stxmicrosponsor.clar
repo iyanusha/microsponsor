@@ -616,6 +616,46 @@
     )
 )
 
+(define-public (verify-milestone
+    (scholarship-id uint)
+    (milestone-id uint))
+    (let
+        (
+            (scholarship (unwrap! (map-get? Scholarships scholarship-id) ERR-NOT-FOUND))
+            (milestone (unwrap! (map-get? Milestones
+                {scholarship-id: scholarship-id, milestone-id: milestone-id})
+                ERR-NOT-FOUND))
+        )
+        (begin
+            (asserts! (is-admin tx-sender) ERR-NOT-AUTHORIZED)
+            (asserts! (get completed milestone) ERR-MILESTONE-INVALID)
+            (asserts! (not (get verified milestone)) ERR-ALREADY-EXISTS)
+
+            (try! (as-contract (stx-transfer?
+                (get amount milestone)
+                tx-sender
+                (get student scholarship))))
+
+            (map-set Scholarships scholarship-id
+                (merge scholarship {
+                    released-amount: (+ (get released-amount scholarship) (get amount milestone)),
+                    last-update: block-height
+                }))
+
+            (try! (log-activity tx-sender "MILESTONE_VERIFIED"
+                (get description milestone) "MILESTONE" "MEDIUM"))
+
+            (ok (map-set Milestones
+                {scholarship-id: scholarship-id, milestone-id: milestone-id}
+                (merge milestone {
+                    verified: true,
+                    verification-time: block-height,
+                    verifier: tx-sender
+                })))
+        )
+    )
+)
+
 ;; ============================================
 ;; Read-Only Functions
 ;; ============================================
