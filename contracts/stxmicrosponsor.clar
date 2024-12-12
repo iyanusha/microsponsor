@@ -372,6 +372,24 @@
     )
 )
 
+(define-public (deactivate-student (student-address principal))
+    (let
+        (
+            (student (unwrap! (map-get? Students student-address) ERR-NOT-FOUND))
+        )
+        (begin
+            (asserts! (is-admin tx-sender) ERR-NOT-AUTHORIZED)
+            (asserts! (is-eq (get status student) "active") ERR-INACTIVE-STATUS)
+            (try! (log-activity tx-sender "STUDENT_DEACTIVATED" (get name student) "STUDENT" "HIGH"))
+            (ok (map-set Students student-address
+                (merge student {
+                    status: "inactive",
+                    last-activity: block-height
+                })))
+        )
+    )
+)
+
 (define-public (update-student-metrics
     (student-address principal)
     (gpa uint)
