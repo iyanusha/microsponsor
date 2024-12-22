@@ -1,5 +1,5 @@
-;; MicroSponsor Smart Contract v3.0
-;; Comprehensive scholarship management system with enhanced features
+;; MicroSponsor Smart Contract v3.1
+;; Scholarship management with milestone-based fund release
 
 ;; ============================================
 ;; Constants and Error Codes
