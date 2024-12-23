@@ -718,6 +718,10 @@
     (map-get? ActivityLog activity-id)
 )
 
+(define-read-only (get-admin-status (address principal))
+    (is-admin address)
+)
+
 ;; ============================================
 ;; Emergency Functions
 ;; ============================================
