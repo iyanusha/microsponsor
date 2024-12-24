@@ -1,10 +1,11 @@
 import { useCallback, useState } from 'react';
-import { showConnect } from '@stacks/connect';
-import { StacksNetwork, StacksMainnet, StacksTestnet } from '@stacks/network';
+import { AppConfig, UserSession, showConnect } from '@stacks/connect';
+
+const appConfig = new AppConfig(['store_write', 'publish_data']);
+const userSession = new UserSession({ appConfig });
 
 const ConnectWallet = () => {
   const [address, setAddress] = useState('');
-  const network = new StacksTestnet(); // Change to StacksMainnet for production
 
   const connect = useCallback(() => {
     showConnect({
@@ -13,12 +14,19 @@ const ConnectWallet = () => {
         icon: window.location.origin + '/favicon.ico',
       },
       redirectTo: '/',
-      onFinish: (data) => {
-        setAddress(data.addresses.testnet); // Will use mainnet for production
-        // You can add more functionality here after connection
+      onFinish: () => {
+        if (userSession.isUserSignedIn()) {
+          const userData = userSession.loadUserData();
+          setAddress(userData.profile.stxAddress.testnet);
+        }
       },
-      userSession: true,
+      userSession,
     });
+  }, []);
+
+  const disconnect = useCallback(() => {
+    userSession.signUserOut();
+    setAddress('');
   }, []);
 
   return (
@@ -26,7 +34,7 @@ const ConnectWallet = () => {
       {!address ? (
         <button
           onClick={connect}
-          className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 
+          className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700
                    transition-colors duration-200 flex items-center space-x-2"
         >
           <svg
@@ -46,11 +54,19 @@ const ConnectWallet = () => {
           <span>Connect Wallet</span>
         </button>
       ) : (
-        <div className="bg-gray-100 rounded-lg px-4 py-2 flex items-center space-x-2">
-          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-          <span className="text-gray-700">
-            {`${address.slice(0, 6)}...${address.slice(-4)}`}
-          </span>
+        <div className="flex items-center space-x-3">
+          <div className="bg-gray-100 rounded-lg px-4 py-2 flex items-center space-x-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <span className="text-gray-700">
+              {`${address.slice(0, 6)}...${address.slice(-4)}`}
+            </span>
+          </div>
+          <button
+            onClick={disconnect}
+            className="text-gray-500 hover:text-gray-700 text-sm"
+          >
+            Disconnect
+          </button>
         </div>
       )}
     </div>
