@@ -1,5 +1,5 @@
-;; MicroSponsor Smart Contract v3.0
-;; Comprehensive scholarship management system with enhanced features
+;; MicroSponsor Smart Contract v3.1
+;; Scholarship management with milestone-based fund release
 
 ;; ============================================
 ;; Constants and Error Codes
@@ -352,6 +352,44 @@
     )
 )
 
+(define-public (verify-student (student-address principal))
+    (let
+        (
+            (student (unwrap! (map-get? Students student-address) ERR-NOT-FOUND))
+        )
+        (begin
+            (asserts! (is-admin tx-sender) ERR-NOT-AUTHORIZED)
+            (asserts! (not (get verified student)) ERR-ALREADY-EXISTS)
+            (try! (log-activity tx-sender "STUDENT_VERIFIED" (get name student) "STUDENT" "MEDIUM"))
+            (ok (map-set Students student-address
+                (merge student {
+                    verified: true,
+                    verification-time: block-height,
+                    verification-admin: tx-sender,
+                    status: "active"
+                })))
+        )
+    )
+)
+
+(define-public (deactivate-student (student-address principal))
+    (let
+        (
+            (student (unwrap! (map-get? Students student-address) ERR-NOT-FOUND))
+        )
+        (begin
+            (asserts! (is-admin tx-sender) ERR-NOT-AUTHORIZED)
+            (asserts! (is-eq (get status student) "active") ERR-INACTIVE-STATUS)
+            (try! (log-activity tx-sender "STUDENT_DEACTIVATED" (get name student) "STUDENT" "HIGH"))
+            (ok (map-set Students student-address
+                (merge student {
+                    status: "inactive",
+                    last-activity: block-height
+                })))
+        )
+    )
+)
+
 (define-public (update-student-metrics
     (student-address principal)
     (gpa uint)
@@ -382,28 +420,29 @@
 ;; Public Functions - Scholarship Management
 ;; ============================================
 
-(define-public (create-scholarship 
-    (student-address principal) 
+(define-public (create-scholarship
+    (student-address principal)
+    (amount uint)
     (milestone-count uint)
     (fund-recovery-address principal)
     (category (string-ascii 50)))
     (let
         (
             (scholarship-id (+ (var-get admin-action-counter) u1))
-            (amount (stx-get-balance tx-sender))
         )
         (begin
             (asserts! (is-contract-enabled) ERR-CONTRACT-PAUSED)
             (asserts! (verify-amount amount) ERR-INVALID-AMOUNT)
+            (asserts! (> milestone-count u0) ERR-INVALID-PARAMS)
             (asserts! (is-some (map-get? Students student-address)) ERR-NOT-FOUND)
-            (asserts! (get verified (unwrap! (map-get? Students student-address) ERR-NOT-FOUND)) 
+            (asserts! (get verified (unwrap! (map-get? Students student-address) ERR-NOT-FOUND))
                      ERR-STUDENT-NOT-VERIFIED)
-            
+
             (var-set admin-action-counter scholarship-id)
             (try! (stx-transfer? amount tx-sender (as-contract tx-sender)))
             (try! (update-donor-metrics tx-sender amount))
             (try! (log-activity tx-sender "SCHOLARSHIP_CREATED" category "SCHOLARSHIP" "MEDIUM"))
-            
+
             (ok (map-set Scholarships scholarship-id
                 {
                     donor: tx-sender,
@@ -595,6 +634,46 @@
     )
 )
 
+(define-public (verify-milestone
+    (scholarship-id uint)
+    (milestone-id uint))
+    (let
+        (
+            (scholarship (unwrap! (map-get? Scholarships scholarship-id) ERR-NOT-FOUND))
+            (milestone (unwrap! (map-get? Milestones
+                {scholarship-id: scholarship-id, milestone-id: milestone-id})
+                ERR-NOT-FOUND))
+        )
+        (begin
+            (asserts! (is-admin tx-sender) ERR-NOT-AUTHORIZED)
+            (asserts! (get completed milestone) ERR-MILESTONE-INVALID)
+            (asserts! (not (get verified milestone)) ERR-ALREADY-EXISTS)
+
+            (try! (as-contract (stx-transfer?
+                (get amount milestone)
+                tx-sender
+                (get student scholarship))))
+
+            (map-set Scholarships scholarship-id
+                (merge scholarship {
+                    released-amount: (+ (get released-amount scholarship) (get amount milestone)),
+                    last-update: block-height
+                }))
+
+            (try! (log-activity tx-sender "MILESTONE_VERIFIED"
+                (get description milestone) "MILESTONE" "MEDIUM"))
+
+            (ok (map-set Milestones
+                {scholarship-id: scholarship-id, milestone-id: milestone-id}
+                (merge milestone {
+                    verified: true,
+                    verification-time: block-height,
+                    verifier: tx-sender
+                })))
+        )
+    )
+)
+
 ;; ============================================
 ;; Read-Only Functions
 ;; ============================================
@@ -637,6 +716,10 @@
 
 (define-read-only (get-activity-log (activity-id uint))
     (map-get? ActivityLog activity-id)
+)
+
+(define-read-only (get-admin-status (address principal))
+    (is-admin address)
 )
 
 ;; ============================================

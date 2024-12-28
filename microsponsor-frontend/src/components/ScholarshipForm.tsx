@@ -14,8 +14,9 @@ const ScholarshipForm = () => {
     e.preventDefault();
 
     const network = new StacksTestnet(); // Change to StacksMainnet for production
-    const contractAddress = 'YOUR_CONTRACT_ADDRESS';
-    const contractName = 'microsponsor';
+    const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
+      'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
+    const contractName = 'stxmicrosponsor';
 
     const functionArgs = [
       standardPrincipalCV(formData.studentAddress),

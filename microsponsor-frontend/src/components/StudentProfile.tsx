@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { callReadOnlyFunction } from '@stacks/transactions';
+import { callReadOnlyFunction, standardPrincipalCV } from '@stacks/transactions';
 import { StacksTestnet } from '@stacks/network';
 
 interface StudentInfo {
@@ -19,15 +19,16 @@ const StudentProfile = ({ address }: { address: string }) => {
     const fetchStudentInfo = async () => {
       try {
         const network = new StacksTestnet();
-        const contractAddress = 'YOUR_CONTRACT_ADDRESS';
-        const contractName = 'microsponsor';
+        const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
+          'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
+        const contractName = 'stxmicrosponsor';
 
         const result = await callReadOnlyFunction({
           network,
           contractAddress,
           contractName,
           functionName: 'get-student-info',
-          functionArgs: [address],
+          functionArgs: [standardPrincipalCV(address)],
           senderAddress: address,
         });
 

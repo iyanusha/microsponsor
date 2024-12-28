@@ -13,9 +13,9 @@ export const getNetwork = (): StacksNetwork => {
   return new StacksTestnet(); // Change to StacksMainnet for production
 };
 
-// Contract details
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || '';
-const CONTRACT_NAME = 'microsponsor';
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
+  'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
+const CONTRACT_NAME = 'stxmicrosponsor';
 
 // Helper function to create contract call options
 export const createContractCallOptions = ({

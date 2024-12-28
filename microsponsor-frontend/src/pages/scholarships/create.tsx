@@ -29,13 +29,16 @@ export default function CreateScholarship() {
 
     try {
       const network = new StacksTestnet();
-      const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || '';
-      const contractName = 'microsponsor';
+      const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
+        'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
+      const contractName = 'stxmicrosponsor';
 
+      const amountMicro = parseInt(formData.amount) * 1000000;
       const functionArgs = [
         standardPrincipalCV(formData.studentAddress),
+        uintCV(amountMicro),
         uintCV(parseInt(formData.milestoneCount)),
-        standardPrincipalCV(formData.studentAddress), // fund recovery address
+        standardPrincipalCV(formData.studentAddress),
         stringAsciiCV(formData.category)
       ];
 
