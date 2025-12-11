@@ -679,7 +679,11 @@
 ;; ============================================
 
 (define-read-only (get-contract-status)
-    (var-get contract-enabled)
+    {
+        enabled: (var-get contract-enabled),
+        block-height: block-height,
+        current-time: (unwrap-panic (get-stacks-block-info? time block-height))
+    }
 )
 
 (define-read-only (get-student-info (student-address principal))
