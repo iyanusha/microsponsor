@@ -1,5 +1,6 @@
-;; MicroSponsor Smart Contract v3.1
+;; MicroSponsor Smart Contract v4.0
 ;; Scholarship management with milestone-based fund release
+;; Clarity 4 compatible
 
 ;; ============================================
 ;; Constants and Error Codes
