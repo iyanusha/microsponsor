@@ -1,4 +1,4 @@
-import { StacksTestnet, StacksNetwork } from '@stacks/network';
+import { StacksTestnet, StacksMainnet, StacksNetwork } from '@stacks/network';
 import { 
   callReadOnlyFunction, 
   standardPrincipalCV, 
@@ -8,14 +8,21 @@ import {
   ContractCallOptions
 } from '@stacks/transactions';
 
-// Network configuration
+const isMainnet = process.env.NEXT_PUBLIC_NETWORK === 'mainnet';
+
 export const getNetwork = (): StacksNetwork => {
-  return new StacksTestnet(); // Change to StacksMainnet for production
+  return isMainnet ? new StacksMainnet() : new StacksTestnet();
 };
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
   'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
 const CONTRACT_NAME = 'stxmicrosponsor';
+
+export const CLARITY_VERSION = 4;
+
+export const EXPLORER_URL = isMainnet
+  ? 'https://explorer.hiro.so'
+  : 'https://explorer.hiro.so/?chain=testnet';
 
 // Helper function to create contract call options
 export const createContractCallOptions = ({
