@@ -15,7 +15,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "MicroSponsor - Decentralized Education Funding",
-  description: "Blockchain-based micro-scholarship platform on Stacks",
+  description: "Milestone-based micro-scholarships powered by Stacks and Bitcoin",
 };
 
 export default function RootLayout({
