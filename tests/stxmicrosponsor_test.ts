@@ -193,14 +193,15 @@ describe("stxmicrosponsor", () => {
     );
   });
 
-  it("contract status returns true by default", () => {
+  it("contract status returns enabled by default", () => {
     const status = simnet.callReadOnlyFn(
       "stxmicrosponsor",
       "get-contract-status",
       [],
       deployer
     );
-    expect(status.result).toBeBool(true);
+    const statusTuple = status.result as any;
+    expect(statusTuple.data.enabled).toBeBool(true);
   });
 
   it("admin can pause and resume contract", () => {
@@ -224,7 +225,8 @@ describe("stxmicrosponsor", () => {
       [],
       deployer
     );
-    expect(status.result).toBeBool(false);
+    let statusTuple = status.result as any;
+    expect(statusTuple.data.enabled).toBeBool(false);
 
     simnet.callPublicFn(
       "stxmicrosponsor",
@@ -239,6 +241,7 @@ describe("stxmicrosponsor", () => {
       [],
       deployer
     );
-    expect(status.result).toBeBool(true);
+    statusTuple = status.result as any;
+    expect(statusTuple.data.enabled).toBeBool(true);
   });
 });
