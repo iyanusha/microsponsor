@@ -3,16 +3,19 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Header from '../../components/Header';
 import { openContractCall } from '@stacks/connect';
-import { StacksTestnet } from '@stacks/network';
 import {
   standardPrincipalCV,
   uintCV,
   stringAsciiCV,
   PostConditionMode,
 } from '@stacks/transactions';
+import { useWallet } from '../../hooks/useWallet';
+import { getNetwork } from '../../utils/contracts';
+import { isValidStacksAddress } from '../../utils/helpers';
 
 export default function CreateScholarship() {
   const router = useRouter();
+  const { connected, connect } = useWallet();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     studentAddress: '',
@@ -27,8 +30,14 @@ export default function CreateScholarship() {
     e.preventDefault();
     setLoading(true);
 
+    if (!connected) { connect(); return; }
+    if (!isValidStacksAddress(formData.studentAddress)) {
+      alert('Invalid student Stacks address');
+      setLoading(false);
+      return;
+    }
     try {
-      const network = new StacksTestnet();
+      const network = getNetwork();
       const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
         'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
       const contractName = 'stxmicrosponsor';
