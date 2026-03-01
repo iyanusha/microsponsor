@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Header from '../components/Header';
 import StudentProfile from '../components/StudentProfile';
 import { useWallet } from '../hooks/useWallet';
+import DonorProfile from '../components/DonorProfile';
 import { truncateAddress, formatSTX, calculateProgress } from '../utils/helpers';
 
 interface Scholarship {
@@ -59,6 +60,9 @@ export default function Dashboard() {
       <Header />
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div className="mb-6">
+          <DonorProfile address={address} />
+        </div>
         <div className="mb-8">
           <StudentProfile address={address} />
         </div>
