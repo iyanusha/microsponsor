@@ -28,27 +28,31 @@ export default function Home() {
                     MicroSponsor connects students with donors through transparent, 
                     milestone-based scholarships powered by blockchain technology.
                   </p>
-                  <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
-                    <div className="rounded-md shadow">
-                      <Link
-                        href="/dashboard"
-                        className="w-full flex items-center justify-center px-8 py-3 border border-transparent 
-                                 text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 
-                                 md:py-4 md:text-lg md:px-10"
-                      >
-                        Get Started
-                      </Link>
-                    </div>
-                    <div className="mt-3 sm:mt-0 sm:ml-3">
-                      <Link
-                        href="/scholarships/create"
-                        className="w-full flex items-center justify-center px-8 py-3 border border-transparent 
-                                 text-base font-medium rounded-md text-indigo-600 bg-indigo-100 
-                                 hover:bg-indigo-200 md:py-4 md:text-lg md:px-10"
-                      >
-                        Create Scholarship
-                      </Link>
-                    </div>
+                  <div className="mt-5 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:justify-center lg:justify-start">
+                    <Link
+                      href="/scholarships/create"
+                      className="flex items-center justify-center px-8 py-3 border border-transparent
+                               text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700
+                               md:py-4 md:text-lg md:px-10"
+                    >
+                      Sponsor a Student
+                    </Link>
+                    <Link
+                      href="/students/register"
+                      className="flex items-center justify-center px-8 py-3 border border-transparent
+                               text-base font-medium rounded-md text-indigo-600 bg-indigo-100
+                               hover:bg-indigo-200 md:py-4 md:text-lg md:px-10"
+                    >
+                      Register as Student
+                    </Link>
+                    <Link
+                      href="/dashboard"
+                      className="flex items-center justify-center px-8 py-3 border border-gray-300
+                               text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50
+                               md:py-4 md:text-lg md:px-10"
+                    >
+                      Dashboard
+                    </Link>
                   </div>
                 </div>
               </main>

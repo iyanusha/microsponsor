@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { callReadOnlyFunction, standardPrincipalCV } from '@stacks/transactions';
-import { StacksTestnet } from '@stacks/network';
+import { useWallet } from '../hooks/useWallet';
+import { getNetwork } from '../utils/contracts';
+import { truncateAddress } from '../utils/helpers';
 
 interface StudentInfo {
   name: string;
@@ -9,112 +11,118 @@ interface StudentInfo {
   status: string;
   milestonesCompleted: number;
   verified: boolean;
+  program: string;
 }
 
-const StudentProfile = ({ address }: { address: string }) => {
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
+  'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
+const CONTRACT_NAME = 'stxmicrosponsor';
+
+const StudentProfile = ({ address: propAddress }: { address?: string }) => {
+  const { address: walletAddress } = useWallet();
+  const address = propAddress || walletAddress;
+
   const [studentInfo, setStudentInfo] = useState<StudentInfo | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
+    if (!address) return;
     const fetchStudentInfo = async () => {
+      setLoading(true);
       try {
-        const network = new StacksTestnet();
-        const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
-          'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
-        const contractName = 'stxmicrosponsor';
-
-        const result = await callReadOnlyFunction({
-          network,
-          contractAddress,
-          contractName,
+        const result: any = await callReadOnlyFunction({
+          network: getNetwork(),
+          contractAddress: CONTRACT_ADDRESS,
+          contractName: CONTRACT_NAME,
           functionName: 'get-student-info',
           functionArgs: [standardPrincipalCV(address)],
           senderAddress: address,
         });
-
-        // Process the result and set student info
-        setStudentInfo(result as any); // Type casting needed
-      } catch (error) {
-        console.error('Error fetching student info:', error);
+        if (result?.value) {
+          const v = result.value;
+          setStudentInfo({
+            name: v.data?.name?.data || '',
+            institution: v.data?.institution?.data || '',
+            totalReceived: Number(v.data?.['total-received']?.value ?? 0),
+            status: v.data?.status?.data || 'unknown',
+            milestonesCompleted: Number(v.data?.['milestones-completed']?.value ?? 0),
+            verified: Boolean(v.data?.verified?.value),
+            program: v.data?.program?.data || '',
+          });
+        } else {
+          setNotFound(true);
+        }
+      } catch {
+        setNotFound(true);
       } finally {
         setLoading(false);
       }
     };
-
-    if (address) {
-      fetchStudentInfo();
-    }
+    fetchStudentInfo();
   }, [address]);
+
+  if (!address) return null;
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+      <div className="flex justify-center items-center h-32">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" />
       </div>
     );
   }
 
-  if (!studentInfo) {
+  if (notFound) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-500">No student profile found</p>
+      <div className="card card-body text-center text-gray-500">
+        <p>No student profile found for {truncateAddress(address)}.</p>
+        <a href="/students/register" className="text-indigo-600 hover:underline mt-2 block">
+          Register as a student →
+        </a>
       </div>
     );
   }
+
+  if (!studentInfo) return null;
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow">
-      <div className="space-y-6">
-        <div className="flex items-center space-x-4">
-          <div className="bg-indigo-100 rounded-full p-3">
-            <svg
-              className="w-6 h-6 text-indigo-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-              />
-            </svg>
-          </div>
+    <div className="card">
+      <div className="card-body">
+        <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">{studentInfo.name}</h2>
-            <p className="text-gray-500">{studentInfo.institution}</p>
+            <h2 className="text-xl font-bold text-gray-900">{studentInfo.name}</h2>
+            <p className="text-gray-500 text-sm mt-1">
+              {studentInfo.institution} — {studentInfo.program}
+            </p>
+            <p className="text-gray-400 text-xs mt-1 font-mono">
+              {truncateAddress(address)}
+            </p>
           </div>
-          {studentInfo.verified && (
-            <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-              Verified
+          <div className="flex flex-col items-end space-y-1">
+            {studentInfo.verified ? (
+              <span className="badge-success">Verified</span>
+            ) : (
+              <span className="badge-warning">Pending</span>
+            )}
+            <span className={`badge ${studentInfo.status === 'active' ? 'badge-success' : 'badge-info'}`}>
+              {studentInfo.status}
             </span>
-          )}
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-100">
           <div>
-            <h3 className="text-sm font-medium text-gray-500">Total Received</h3>
-            <p className="mt-1 text-lg font-semibold text-gray-900">
-              {studentInfo.totalReceived} STX
+            <p className="text-xs text-gray-500">Total Received</p>
+            <p className="text-lg font-semibold text-gray-900">
+              {(studentInfo.totalReceived / 1_000_000).toFixed(2)} STX
             </p>
           </div>
           <div>
-            <h3 className="text-sm font-medium text-gray-500">
-              Milestones Completed
-            </h3>
-            <p className="mt-1 text-lg font-semibold text-gray-900">
+            <p className="text-xs text-gray-500">Milestones Completed</p>
+            <p className="text-lg font-semibold text-gray-900">
               {studentInfo.milestonesCompleted}
             </p>
           </div>
-        </div>
-
-        <div>
-          <h3 className="text-sm font-medium text-gray-500">Status</h3>
-          <p className="mt-1 text-lg font-semibold text-gray-900">
-            {studentInfo.status}
-          </p>
         </div>
       </div>
     </div>
