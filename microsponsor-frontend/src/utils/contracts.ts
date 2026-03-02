@@ -99,3 +99,34 @@ export const getMilestoneInfo = async (scholarshipId: number, milestoneId: numbe
     throw error;
   }
 };
+
+export const getDonorProfile = async (address: string) => {
+  const network = getNetwork();
+  try {
+    const result = await callReadOnlyFunction({
+      network,
+      contractAddress: CONTRACT_ADDRESS,
+      contractName: CONTRACT_NAME,
+      functionName: 'get-donor-profile',
+      functionArgs: [standardPrincipalCV(address)],
+      senderAddress: address,
+    });
+    return result;
+  } catch (error) {
+    console.error('Error fetching donor profile:', error);
+    throw error;
+  }
+};
+
+export const getContractStatus = async () => {
+  const network = getNetwork();
+  const result = await callReadOnlyFunction({
+    network,
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACT_NAME,
+    functionName: 'get-contract-status',
+    functionArgs: [],
+    senderAddress: CONTRACT_ADDRESS,
+  });
+  return result;
+};
