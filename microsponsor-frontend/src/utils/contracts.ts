@@ -1,11 +1,13 @@
 import { StacksTestnet, StacksMainnet, StacksNetwork } from '@stacks/network';
-import { 
-  callReadOnlyFunction, 
-  standardPrincipalCV, 
-  uintCV, 
+import {
+  callReadOnlyFunction,
+  standardPrincipalCV,
+  uintCV,
   stringAsciiCV,
+  boolCV,
   PostConditionMode,
-  ContractCallOptions
+  ContractCallOptions,
+  openContractCall,
 } from '@stacks/transactions';
 
 const isMainnet = process.env.NEXT_PUBLIC_NETWORK === 'mainnet';
@@ -130,3 +132,45 @@ export const getContractStatus = async () => {
   });
   return result;
 };
+
+export const addMilestone = (
+  scholarshipId: number,
+  description: string,
+  amount: number,
+  opts: { onFinish: (data: any) => void; onCancel: () => void }
+) =>
+  openContractCall({
+    network: getNetwork(),
+    anchorMode: 1,
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACT_NAME,
+    functionName: 'add-milestone',
+    functionArgs: [
+      uintCV(scholarshipId),
+      stringAsciiCV(description),
+      uintCV(amount),
+    ],
+    postConditionMode: PostConditionMode.Allow,
+    ...opts,
+  });
+
+export const completeMilestone = (
+  scholarshipId: number,
+  milestoneId: number,
+  evidence: string,
+  opts: { onFinish: (data: any) => void; onCancel: () => void }
+) =>
+  openContractCall({
+    network: getNetwork(),
+    anchorMode: 1,
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACT_NAME,
+    functionName: 'complete-milestone',
+    functionArgs: [
+      uintCV(scholarshipId),
+      uintCV(milestoneId),
+      stringAsciiCV(evidence),
+    ],
+    postConditionMode: PostConditionMode.Allow,
+    ...opts,
+  });
