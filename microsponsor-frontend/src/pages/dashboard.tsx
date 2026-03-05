@@ -3,9 +3,10 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Header from '../components/Header';
 import StudentProfile from '../components/StudentProfile';
-import { useWallet } from '../hooks/useWallet';
 import DonorProfile from '../components/DonorProfile';
-import { truncateAddress, formatSTX, calculateProgress } from '../utils/helpers';
+import ScholarshipCard from '../components/ScholarshipCard';
+import { useWallet } from '../hooks/useWallet';
+import { formatSTX, calculateProgress, truncateAddress } from '../utils/helpers';
 
 interface Scholarship {
   id: number;
