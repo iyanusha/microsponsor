@@ -50,19 +50,28 @@ export default function Dashboard() {
 
   if (!connected) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen" style={{ backgroundColor: 'var(--bg)' }}>
         <Head>
           <title>Dashboard - MicroSponsor</title>
         </Head>
         <Header />
-        <main className="max-w-7xl mx-auto py-16 px-4 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+        <main className="max-w-7xl mx-auto py-24 px-4 text-center">
+          <div
+            className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6"
+            style={{ backgroundColor: 'var(--accent-lite)' }}
+          >
+            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--accent)' }}>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold mb-3" style={{ color: 'var(--text)' }}>
             Connect your wallet to continue
           </h2>
-          <p className="text-gray-500 mb-8">
+          <p className="mb-8" style={{ color: 'var(--text-muted)' }}>
             You need a Stacks wallet to access your dashboard.
           </p>
-          <button onClick={connect} className="btn-primary">
+          <button onClick={connect} className="btn-primary px-8 py-3 text-base rounded-xl">
             Connect Wallet
           </button>
         </main>
@@ -71,7 +80,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg)' }}>
       <Head>
         <title>Dashboard - MicroSponsor</title>
         <meta name="description" content="MicroSponsor Dashboard" />
@@ -79,7 +88,7 @@ export default function Dashboard() {
 
       <Header />
 
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <main className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8 px-4">
         <div className="mb-6">
           <DonorProfile address={address} />
         </div>
@@ -89,14 +98,14 @@ export default function Dashboard() {
 
         <div className="card mb-6">
           <div className="card-header flex items-center justify-between">
-            <h3 className="text-lg font-medium text-gray-900">
+            <h3 className="text-lg font-bold" style={{ color: 'var(--text)' }}>
               My Scholarships
             </h3>
             <Link href="/scholarships/create" className="btn-primary text-sm">
-              Create Scholarship
+              + Create Scholarship
             </Link>
           </div>
-          <div className="border-t border-gray-200 p-4">
+          <div className="p-4" style={{ borderTop: '1px solid var(--border)' }}>
             {loading ? (
               <div className="flex justify-center items-center h-32">
                 <Spinner size="md" />
@@ -108,8 +117,8 @@ export default function Dashboard() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8">
-                <p className="text-gray-500 mb-4">No scholarships yet.</p>
+              <div className="text-center py-10">
+                <p className="mb-4" style={{ color: 'var(--text-muted)' }}>No scholarships yet.</p>
                 <Link href="/scholarships/create" className="btn-secondary text-sm">
                   Create your first scholarship
                 </Link>
