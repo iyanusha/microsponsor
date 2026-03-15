@@ -1,19 +1,17 @@
-import { StacksTestnet, StacksMainnet, StacksNetwork } from '@stacks/network';
+import { STACKS_TESTNET, STACKS_MAINNET, StacksNetwork } from '@stacks/network';
 import {
-  callReadOnlyFunction,
+  fetchCallReadOnlyFunction,
   standardPrincipalCV,
   uintCV,
   stringAsciiCV,
-  boolCV,
   PostConditionMode,
-  ContractCallOptions,
-  openContractCall,
 } from '@stacks/transactions';
+import { openContractCall } from '@stacks/connect';
 
 const isMainnet = process.env.NEXT_PUBLIC_NETWORK === 'mainnet';
 
 export const getNetwork = (): StacksNetwork => {
-  return isMainnet ? new StacksMainnet() : new StacksTestnet();
+  return isMainnet ? STACKS_MAINNET : STACKS_TESTNET;
 };
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
@@ -26,32 +24,11 @@ export const EXPLORER_URL = isMainnet
   ? 'https://explorer.hiro.so'
   : 'https://explorer.hiro.so/?chain=testnet';
 
-// Helper function to create contract call options
-export const createContractCallOptions = ({
-  functionName,
-  functionArgs,
-  network = getNetwork(),
-}: {
-  functionName: string;
-  functionArgs: any[];
-  network?: StacksNetwork;
-}): ContractCallOptions => {
-  return {
-    network,
-    anchorMode: 1,
-    contractAddress: CONTRACT_ADDRESS,
-    contractName: CONTRACT_NAME,
-    functionName,
-    functionArgs,
-    postConditionMode: PostConditionMode.Allow,
-  };
-};
-
 // Read-only contract functions
 export const getStudentInfo = async (address: string) => {
   const network = getNetwork();
   try {
-    const result = await callReadOnlyFunction({
+    const result = await fetchCallReadOnlyFunction({
       network,
       contractAddress: CONTRACT_ADDRESS,
       contractName: CONTRACT_NAME,
@@ -69,7 +46,7 @@ export const getStudentInfo = async (address: string) => {
 export const getScholarshipInfo = async (scholarshipId: number) => {
   const network = getNetwork();
   try {
-    const result = await callReadOnlyFunction({
+    const result = await fetchCallReadOnlyFunction({
       network,
       contractAddress: CONTRACT_ADDRESS,
       contractName: CONTRACT_NAME,
@@ -87,7 +64,7 @@ export const getScholarshipInfo = async (scholarshipId: number) => {
 export const getMilestoneInfo = async (scholarshipId: number, milestoneId: number) => {
   const network = getNetwork();
   try {
-    const result = await callReadOnlyFunction({
+    const result = await fetchCallReadOnlyFunction({
       network,
       contractAddress: CONTRACT_ADDRESS,
       contractName: CONTRACT_NAME,
@@ -105,7 +82,7 @@ export const getMilestoneInfo = async (scholarshipId: number, milestoneId: numbe
 export const getDonorProfile = async (address: string) => {
   const network = getNetwork();
   try {
-    const result = await callReadOnlyFunction({
+    const result = await fetchCallReadOnlyFunction({
       network,
       contractAddress: CONTRACT_ADDRESS,
       contractName: CONTRACT_NAME,
@@ -122,7 +99,7 @@ export const getDonorProfile = async (address: string) => {
 
 export const getContractStatus = async () => {
   const network = getNetwork();
-  const result = await callReadOnlyFunction({
+  const result = await fetchCallReadOnlyFunction({
     network,
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACT_NAME,
@@ -131,6 +108,42 @@ export const getContractStatus = async () => {
     senderAddress: CONTRACT_ADDRESS,
   });
   return result;
+};
+
+export const getInstitutionInfo = async (institutionName: string) => {
+  const network = getNetwork();
+  try {
+    const result = await fetchCallReadOnlyFunction({
+      network,
+      contractAddress: CONTRACT_ADDRESS,
+      contractName: CONTRACT_NAME,
+      functionName: 'get-institution-info',
+      functionArgs: [stringAsciiCV(institutionName)],
+      senderAddress: CONTRACT_ADDRESS,
+    });
+    return result;
+  } catch (error) {
+    console.error('Error fetching institution info:', error);
+    throw error;
+  }
+};
+
+export const getStudentMetrics = async (address: string) => {
+  const network = getNetwork();
+  try {
+    const result = await fetchCallReadOnlyFunction({
+      network,
+      contractAddress: CONTRACT_ADDRESS,
+      contractName: CONTRACT_NAME,
+      functionName: 'get-student-metrics',
+      functionArgs: [standardPrincipalCV(address)],
+      senderAddress: address,
+    });
+    return result;
+  } catch (error) {
+    console.error('Error fetching student metrics:', error);
+    throw error;
+  }
 };
 
 export const registerStudent = (
@@ -157,42 +170,6 @@ export const registerStudent = (
     postConditionMode: PostConditionMode.Allow,
     ...opts,
   });
-
-export const getInstitutionInfo = async (institutionName: string) => {
-  const network = getNetwork();
-  try {
-    const result = await callReadOnlyFunction({
-      network,
-      contractAddress: CONTRACT_ADDRESS,
-      contractName: CONTRACT_NAME,
-      functionName: 'get-institution-info',
-      functionArgs: [stringAsciiCV(institutionName)],
-      senderAddress: CONTRACT_ADDRESS,
-    });
-    return result;
-  } catch (error) {
-    console.error('Error fetching institution info:', error);
-    throw error;
-  }
-};
-
-export const getStudentMetrics = async (address: string) => {
-  const network = getNetwork();
-  try {
-    const result = await callReadOnlyFunction({
-      network,
-      contractAddress: CONTRACT_ADDRESS,
-      contractName: CONTRACT_NAME,
-      functionName: 'get-student-metrics',
-      functionArgs: [standardPrincipalCV(address)],
-      senderAddress: address,
-    });
-    return result;
-  } catch (error) {
-    console.error('Error fetching student metrics:', error);
-    throw error;
-  }
-};
 
 export const addMilestone = (
   scholarshipId: number,
