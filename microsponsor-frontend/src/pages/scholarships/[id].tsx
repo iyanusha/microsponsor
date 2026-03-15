@@ -190,3 +190,8 @@ export default function ScholarshipDetail() {
     </div>
   );
 }
+
+// Makes Vercel create a serverless function so dynamic routing works
+export async function getServerSideProps() {
+  return { props: {} };
+}
