@@ -4,6 +4,8 @@ import Head from 'next/head';
 import Header from '../../components/Header';
 import MilestoneCard from '../../components/MilestoneCard';
 import MilestoneForm from '../../components/MilestoneForm';
+import ProgressBar from '../../components/ProgressBar';
+import StatusBadge from '../../components/StatusBadge';
 import Spinner from '../../components/Spinner';
 import { useWallet } from '../../hooks/useWallet';
 import { getScholarshipInfo, getMilestoneInfo, completeMilestone } from '../../utils/contracts';
@@ -129,9 +131,7 @@ export default function ScholarshipDetail() {
                 Scholarship #{scholarshipId}
               </h1>
             </div>
-            <span className={`badge ${scholarship.status === 'active' ? 'badge-success' : 'badge-info'}`}>
-              {scholarship.status}
-            </span>
+            <StatusBadge status={scholarship.status} />
           </div>
           <div className="card-body space-y-3 text-sm">
             <div className="grid grid-cols-2 gap-4">
@@ -152,18 +152,11 @@ export default function ScholarshipDetail() {
                 <p className="font-semibold text-green-600">{formatSTX(scholarship.releasedAmount)}</p>
               </div>
             </div>
-            <div>
-              <div className="flex justify-between text-xs text-gray-500 mb-1">
-                <span>Progress</span>
-                <span>{scholarship.completedMilestones}/{scholarship.milestoneCount} milestones • {progress}%</span>
-              </div>
-              <div className="w-full bg-indigo-100 rounded-full h-2">
-                <div
-                  className="bg-indigo-600 h-2 rounded-full transition-all"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
-            </div>
+            <ProgressBar
+                completed={scholarship.completedMilestones}
+                total={scholarship.milestoneCount}
+                label={`${scholarship.completedMilestones}/${scholarship.milestoneCount} milestones`}
+              />
           </div>
         </div>
 
