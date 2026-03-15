@@ -1,16 +1,11 @@
 import { useEffect, useState } from 'react';
-import { standardPrincipalCV } from '@stacks/transactions';
+import Spinner from './Spinner';
 import { getDonorProfile } from '../utils/contracts';
 import { formatSTX, truncateAddress } from '../utils/helpers';
-
-interface DonorInfo {
-  totalDonated: number;
-  activeScholarships: number;
-  completedScholarships: number;
-}
+import type { DonorProfile as DonorProfileType } from '../types';
 
 const DonorProfile = ({ address }: { address: string }) => {
-  const [donor, setDonor] = useState<DonorInfo | null>(null);
+  const [donor, setDonor] = useState<DonorProfileType | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -24,6 +19,7 @@ const DonorProfile = ({ address }: { address: string }) => {
             totalDonated: Number(v.data?.['total-donated']?.value ?? 0),
             activeScholarships: Number(v.data?.['active-scholarships']?.value ?? 0),
             completedScholarships: Number(v.data?.['completed-scholarships']?.value ?? 0),
+            lastActivity: Number(v.data?.['last-activity']?.value ?? 0),
           });
         }
       })
@@ -34,7 +30,7 @@ const DonorProfile = ({ address }: { address: string }) => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-20">
-        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-600" />
+        <Spinner size="sm" />
       </div>
     );
   }
