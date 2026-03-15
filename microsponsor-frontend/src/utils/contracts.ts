@@ -215,6 +215,22 @@ export const addMilestone = (
     ...opts,
   });
 
+export const verifyMilestone = (
+  scholarshipId: number,
+  milestoneId: number,
+  opts: { onFinish: (data: any) => void; onCancel: () => void }
+) =>
+  openContractCall({
+    network: getNetwork(),
+    anchorMode: 1,
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACT_NAME,
+    functionName: 'verify-milestone',
+    functionArgs: [uintCV(scholarshipId), uintCV(milestoneId)],
+    postConditionMode: PostConditionMode.Allow,
+    ...opts,
+  });
+
 export const completeMilestone = (
   scholarshipId: number,
   milestoneId: number,
