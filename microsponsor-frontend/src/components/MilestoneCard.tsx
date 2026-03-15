@@ -1,36 +1,28 @@
+import StatusBadge from './StatusBadge';
 import { formatSTX } from '../utils/helpers';
-
-interface Milestone {
-  id: number;
-  description: string;
-  amount: number;
-  completed: boolean;
-  verified: boolean;
-}
+import type { Milestone } from '../types';
 
 interface MilestoneCardProps {
   milestone: Milestone;
   scholarshipId: number;
   isStudent?: boolean;
+  isAdmin?: boolean;
   onComplete?: (milestoneId: number) => void;
+  onVerify?: (milestoneId: number) => void;
 }
 
 const MilestoneCard = ({
   milestone,
   isStudent,
+  isAdmin,
   onComplete,
+  onVerify,
 }: MilestoneCardProps) => {
   const statusLabel = milestone.verified
-    ? 'Verified'
+    ? 'verified'
     : milestone.completed
-    ? 'Awaiting Verification'
-    : 'Pending';
-
-  const statusClass = milestone.verified
-    ? 'badge-success'
-    : milestone.completed
-    ? 'badge-warning'
-    : 'badge-info';
+    ? 'pending'
+    : 'inactive';
 
   return (
     <div className="flex items-start justify-between py-4 border-b border-gray-100 last:border-0">
@@ -58,14 +50,22 @@ const MilestoneCard = ({
         </div>
       </div>
 
-      <div className="flex items-center space-x-3 ml-4">
-        <span className={statusClass}>{statusLabel}</span>
-        {isStudent && !milestone.completed && !milestone.verified && (
+      <div className="flex items-center space-x-2 ml-4 flex-shrink-0">
+        <StatusBadge status={statusLabel} />
+        {isStudent && !milestone.completed && (
           <button
             onClick={() => onComplete?.(milestone.id)}
             className="btn-secondary text-xs py-1"
           >
-            Mark Complete
+            Complete
+          </button>
+        )}
+        {isAdmin && milestone.completed && !milestone.verified && (
+          <button
+            onClick={() => onVerify?.(milestone.id)}
+            className="btn-primary text-xs py-1"
+          >
+            Verify
           </button>
         )}
       </div>
