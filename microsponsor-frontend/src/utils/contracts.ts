@@ -133,6 +133,67 @@ export const getContractStatus = async () => {
   return result;
 };
 
+export const registerStudent = (
+  name: string,
+  institution: string,
+  emergencyContact: string,
+  program: string,
+  academicYear: number,
+  opts: { onFinish: (data: any) => void; onCancel: () => void }
+) =>
+  openContractCall({
+    network: getNetwork(),
+    anchorMode: 1,
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACT_NAME,
+    functionName: 'register-student',
+    functionArgs: [
+      stringAsciiCV(name),
+      stringAsciiCV(institution),
+      standardPrincipalCV(emergencyContact),
+      stringAsciiCV(program),
+      uintCV(academicYear),
+    ],
+    postConditionMode: PostConditionMode.Allow,
+    ...opts,
+  });
+
+export const getInstitutionInfo = async (institutionName: string) => {
+  const network = getNetwork();
+  try {
+    const result = await callReadOnlyFunction({
+      network,
+      contractAddress: CONTRACT_ADDRESS,
+      contractName: CONTRACT_NAME,
+      functionName: 'get-institution-info',
+      functionArgs: [stringAsciiCV(institutionName)],
+      senderAddress: CONTRACT_ADDRESS,
+    });
+    return result;
+  } catch (error) {
+    console.error('Error fetching institution info:', error);
+    throw error;
+  }
+};
+
+export const getStudentMetrics = async (address: string) => {
+  const network = getNetwork();
+  try {
+    const result = await callReadOnlyFunction({
+      network,
+      contractAddress: CONTRACT_ADDRESS,
+      contractName: CONTRACT_NAME,
+      functionName: 'get-student-metrics',
+      functionArgs: [standardPrincipalCV(address)],
+      senderAddress: address,
+    });
+    return result;
+  } catch (error) {
+    console.error('Error fetching student metrics:', error);
+    throw error;
+  }
+};
+
 export const addMilestone = (
   scholarshipId: number,
   description: string,
@@ -150,6 +211,22 @@ export const addMilestone = (
       stringAsciiCV(description),
       uintCV(amount),
     ],
+    postConditionMode: PostConditionMode.Allow,
+    ...opts,
+  });
+
+export const verifyMilestone = (
+  scholarshipId: number,
+  milestoneId: number,
+  opts: { onFinish: (data: any) => void; onCancel: () => void }
+) =>
+  openContractCall({
+    network: getNetwork(),
+    anchorMode: 1,
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACT_NAME,
+    functionName: 'verify-milestone',
+    functionArgs: [uintCV(scholarshipId), uintCV(milestoneId)],
     postConditionMode: PostConditionMode.Allow,
     ...opts,
   });
