@@ -4,6 +4,7 @@ import ConnectWallet from './ConnectWallet';
 
 const NAV_LINKS = [
   { href: '/dashboard', label: 'Dashboard' },
+  { href: '/scholarships', label: 'Scholarships' },
   { href: '/scholarships/create', label: 'Create Scholarship' },
   { href: '/students/register', label: 'Register as Student' },
 ];
