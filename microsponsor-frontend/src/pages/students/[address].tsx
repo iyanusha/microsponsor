@@ -180,3 +180,8 @@ export default function StudentProfile() {
     </div>
   );
 }
+
+// Makes Vercel create a serverless function so dynamic routing works
+export async function getServerSideProps() {
+  return { props: {} };
+}
