@@ -12,11 +12,13 @@ import {
 import { useWallet } from '../../hooks/useWallet';
 import { getNetwork } from '../../utils/contracts';
 import { isValidStacksAddress } from '../../utils/helpers';
+import Toast from '../../components/Toast';
 
 export default function CreateScholarship() {
   const router = useRouter();
   const { connected, connect } = useWallet();
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
     studentAddress: '',
     milestoneCount: '3',
@@ -61,7 +63,8 @@ export default function CreateScholarship() {
         postConditionMode: PostConditionMode.Allow,
         onFinish: (data) => {
           console.log('Transaction:', data);
-          router.push('/dashboard');
+          setLoading(false);
+          setSuccess(true);
         },
         onCancel: () => {
           setLoading(false);
@@ -216,6 +219,14 @@ export default function CreateScholarship() {
           </div>
         </div>
       </main>
+
+      {success && (
+        <Toast
+          message="Scholarship created successfully!"
+          type="success"
+          onDismiss={() => router.push('/dashboard')}
+        />
+      )}
     </div>
   );
 }
