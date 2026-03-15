@@ -4,29 +4,48 @@ import Link from 'next/link';
 import Header from '../components/Header';
 import StudentProfile from '../components/StudentProfile';
 import DonorProfile from '../components/DonorProfile';
-import ScholarshipCard from '../components/ScholarshipCard';
+import ScholarshipCard, { ScholarshipSummary } from '../components/ScholarshipCard';
+import Spinner from '../components/Spinner';
 import { useWallet } from '../hooks/useWallet';
-import { formatSTX, calculateProgress, truncateAddress } from '../utils/helpers';
-
-interface Scholarship {
-  id: number;
-  donor: string;
-  amount: number;
-  status: string;
-  milestonesCompleted: number;
-  totalMilestones: number;
-}
+import { getScholarshipInfo } from '../utils/contracts';
 
 export default function Dashboard() {
   const { connected, address, connect } = useWallet();
-  const [scholarships, setScholarships] = useState<Scholarship[]>([]);
+  const [scholarships, setScholarships] = useState<ScholarshipSummary[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!connected || !address) return;
     setLoading(true);
-    // TODO: fetch from contract with getScholarshipInfo
-    setLoading(false);
+    const load = async () => {
+      const results: ScholarshipSummary[] = [];
+      for (let i = 1; i <= 50; i++) {
+        try {
+          const raw: any = await getScholarshipInfo(i);
+          if (!raw?.value) break;
+          const v = raw.value;
+          const donor = v.data?.donor?.address ?? '';
+          const student = v.data?.student?.address ?? '';
+          if (donor !== address && student !== address) continue;
+          results.push({
+            id: i,
+            student,
+            donor,
+            amount: Number(v.data?.amount?.value ?? 0),
+            releasedAmount: Number(v.data?.['released-amount']?.value ?? 0),
+            milestoneCount: Number(v.data?.['milestone-count']?.value ?? 0),
+            completedMilestones: Number(v.data?.['completed-milestones']?.value ?? 0),
+            category: v.data?.category?.data ?? '',
+            status: v.data?.status?.data ?? 'unknown',
+          });
+        } catch {
+          break;
+        }
+      }
+      setScholarships(results);
+      setLoading(false);
+    };
+    load();
   }, [connected, address]);
 
   if (!connected) {
@@ -77,52 +96,17 @@ export default function Dashboard() {
               Create Scholarship
             </Link>
           </div>
-          <div className="border-t border-gray-200">
+          <div className="border-t border-gray-200 p-4">
             {loading ? (
               <div className="flex justify-center items-center h-32">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" />
+                <Spinner size="md" />
               </div>
             ) : scholarships.length > 0 ? (
-              <ul className="divide-y divide-gray-200">
+              <div className="space-y-4">
                 {scholarships.map((s) => (
-                  <li key={s.id} className="px-4 py-4 sm:px-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          Scholarship #{s.id}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          Donor: {truncateAddress(s.donor)}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm font-medium text-gray-900">
-                          {formatSTX(s.amount)}
-                        </p>
-                        <span className="badge-success">{s.status}</span>
-                      </div>
-                    </div>
-                    <div className="mt-2">
-                      <div className="flex justify-between text-xs text-gray-500 mb-1">
-                        <span>Progress</span>
-                        <span>{calculateProgress(s.milestonesCompleted, s.totalMilestones)}%</span>
-                      </div>
-                      <div className="w-full bg-indigo-100 rounded-full h-2">
-                        <div
-                          className="bg-indigo-600 h-2 rounded-full transition-all"
-                          style={{ width: `${calculateProgress(s.milestonesCompleted, s.totalMilestones)}%` }}
-                        />
-                      </div>
-                    </div>
-                    <Link
-                      href={`/scholarships/${s.id}`}
-                      className="mt-2 text-sm text-indigo-600 hover:underline"
-                    >
-                      View details →
-                    </Link>
-                  </li>
+                  <ScholarshipCard key={s.id} scholarship={s} />
                 ))}
-              </ul>
+              </div>
             ) : (
               <div className="text-center py-8">
                 <p className="text-gray-500 mb-4">No scholarships yet.</p>
