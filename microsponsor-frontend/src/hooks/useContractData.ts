@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { callReadOnlyFunction, ClarityValue } from '@stacks/transactions';
+import { fetchCallReadOnlyFunction, ClarityValue } from '@stacks/transactions';
 import { getNetwork } from '../utils/contracts';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
@@ -25,7 +25,7 @@ export function useContractRead<T>(
       setLoading(true);
       setError(null);
       try {
-        const result = await callReadOnlyFunction({
+        const result = await fetchCallReadOnlyFunction({
           network: getNetwork(),
           contractAddress: CONTRACT_ADDRESS,
           contractName: CONTRACT_NAME,
