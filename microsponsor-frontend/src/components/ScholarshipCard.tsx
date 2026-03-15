@@ -1,29 +1,29 @@
 import Link from 'next/link';
+import StatusBadge from './StatusBadge';
 import { formatSTX, truncateAddress, calculateProgress, formatCategory } from '../utils/helpers';
 
-interface ScholarshipCardProps {
+export interface ScholarshipSummary {
   id: number;
   student: string;
   donor: string;
   amount: number;
-  releasedAmount: number;
+  releasedAmount?: number;
   milestoneCount: number;
   completedMilestones: number;
   category: string;
   status: string;
 }
 
-const ScholarshipCard = ({
-  id,
-  student,
-  donor,
-  amount,
-  releasedAmount,
-  milestoneCount,
-  completedMilestones,
-  category,
-  status,
-}: ScholarshipCardProps) => {
+interface ScholarshipCardProps {
+  scholarship: ScholarshipSummary;
+}
+
+const ScholarshipCard = ({ scholarship }: ScholarshipCardProps) => {
+  const {
+    id, student, donor, amount,
+    releasedAmount = 0, milestoneCount,
+    completedMilestones, category, status,
+  } = scholarship;
   const progress = calculateProgress(completedMilestones, milestoneCount);
 
   return (
@@ -38,9 +38,7 @@ const ScholarshipCard = ({
               Scholarship #{id}
             </h3>
           </div>
-          <span className={`badge ${status === 'active' ? 'badge-success' : 'badge-info'}`}>
-            {status}
-          </span>
+          <StatusBadge status={status} />
         </div>
 
         <div className="space-y-1 text-sm text-gray-600 mb-4">
@@ -55,9 +53,11 @@ const ScholarshipCard = ({
           <p>
             <span className="text-gray-400">Amount: </span>
             <span className="font-semibold text-gray-800">{formatSTX(amount)}</span>
-            <span className="text-gray-400 ml-1">
-              ({formatSTX(releasedAmount)} released)
-            </span>
+            {releasedAmount > 0 && (
+              <span className="text-gray-400 ml-1">
+                ({formatSTX(releasedAmount)} released)
+              </span>
+            )}
           </p>
         </div>
 
