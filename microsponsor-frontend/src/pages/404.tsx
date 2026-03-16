@@ -29,7 +29,8 @@ export default function NotFound() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--bg)' }}>
       <Head>
-        <title>Page Not Found - MicroSponsor</title>
+        <title>Page Not Found — MicroSponsor</title>
+        <meta name="robots" content="noindex" />
       </Head>
 
       <Header />

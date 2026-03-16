@@ -55,8 +55,21 @@ export default function ScholarshipsList() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--bg)' }}>
       <Head>
-        <title>Scholarships - MicroSponsor</title>
-        <meta name="description" content="Browse active scholarships" />
+        <title>Browse Scholarships — MicroSponsor</title>
+        <meta name="description" content="Explore active blockchain-backed scholarships on MicroSponsor. Fund a student's education milestone by milestone using Stacks smart contracts." />
+        <meta name="keywords" content="browse scholarships, blockchain scholarship, fund students, Stacks scholarship, STX funding, education blockchain, milestone scholarship" />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://microsponsor.vercel.app/scholarships" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="MicroSponsor" />
+        <meta property="og:title" content="Browse Scholarships — MicroSponsor" />
+        <meta property="og:description" content="Explore active blockchain-backed scholarships. Fund a student's education milestone by milestone using Stacks smart contracts." />
+        <meta property="og:url" content="https://microsponsor.vercel.app/scholarships" />
+        <meta property="og:image" content="https://microsponsor.vercel.app/og-image.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Browse Scholarships — MicroSponsor" />
+        <meta name="twitter:description" content="Explore active blockchain-backed scholarships. Fund a student's education milestone by milestone." />
+        <meta name="twitter:image" content="https://microsponsor.vercel.app/og-image.png" />
       </Head>
 
       <Header />

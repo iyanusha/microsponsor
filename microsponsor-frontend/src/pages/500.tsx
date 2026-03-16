@@ -29,7 +29,8 @@ export default function ServerError() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--bg)' }}>
       <Head>
-        <title>Server Error - MicroSponsor</title>
+        <title>Server Error — MicroSponsor</title>
+        <meta name="robots" content="noindex" />
       </Head>
 
       <Header />

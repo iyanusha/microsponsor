@@ -81,8 +81,9 @@ export default function CreateScholarship() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--bg)' }}>
       <Head>
-        <title>Create Scholarship - MicroSponsor</title>
-        <meta name="description" content="Create a new scholarship" />
+        <title>Create Scholarship — MicroSponsor</title>
+        <meta name="description" content="Create a new blockchain-backed scholarship on MicroSponsor" />
+        <meta name="robots" content="noindex, nofollow" />
       </Head>
 
       <Header />

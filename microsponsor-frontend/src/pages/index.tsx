@@ -697,9 +697,25 @@ export default function Home() {
     <>
       <Head>
         <title>MicroSponsor — Decentralized Education Funding on Stacks</title>
-        <meta name="description" content="Empower students worldwide through transparent, milestone-based scholarships powered by Stacks blockchain smart contracts." />
+        <meta name="description" content="Empower students worldwide through transparent, milestone-based scholarships powered by Stacks blockchain smart contracts. Bitcoin-backed. Zero platform fees." />
+        <meta name="keywords" content="blockchain scholarship, decentralized education funding, Stacks blockchain, STX token, micro scholarship, student funding, smart contract scholarship, Bitcoin education, Web3 education, milestone funding, DeFi education, crypto scholarship" />
+        <meta name="robots" content="index, follow" />
+        <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+        <link rel="canonical" href="https://microsponsor.vercel.app/" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="MicroSponsor" />
+        <meta property="og:title" content="MicroSponsor — Decentralized Education Funding on Stacks" />
+        <meta property="og:description" content="Empower students worldwide through transparent, milestone-based scholarships powered by Stacks blockchain smart contracts. Bitcoin-backed. Zero platform fees." />
+        <meta property="og:url" content="https://microsponsor.vercel.app/" />
+        <meta property="og:image" content="https://microsponsor.vercel.app/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:locale" content="en_US" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="MicroSponsor — Decentralized Education Funding on Stacks" />
+        <meta name="twitter:description" content="Transparent, milestone-based scholarships on the Stacks blockchain. Bitcoin-backed. Zero platform fees." />
+        <meta name="twitter:image" content="https://microsponsor.vercel.app/og-image.png" />
         <meta name="talentapp:project_verification" content="87e8f8d71824c1c53cb1538c8150569764e5a29e02b911edf1aed5fd76d86a2948424fdfe451ab74a6bacdc5803a265ba32da9f170301008071d0cc6a3715037" />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <div style={{ backgroundColor: 'var(--bg)' }} className="min-h-screen">
         <Header />

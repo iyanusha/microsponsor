@@ -32,8 +32,21 @@ export default function StudentsIndex() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--bg)' }}>
       <Head>
-        <title>Students - MicroSponsor</title>
-        <meta name="description" content="Browse MicroSponsor students" />
+        <title>Students — MicroSponsor</title>
+        <meta name="description" content="Discover verified students seeking education funding on MicroSponsor. Browse student profiles and support their academic journey through blockchain-backed scholarships." />
+        <meta name="keywords" content="student profiles, education funding, blockchain students, Stacks education, verified students, scholarship seekers, Web3 students" />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://microsponsor.vercel.app/students" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="MicroSponsor" />
+        <meta property="og:title" content="Students — MicroSponsor" />
+        <meta property="og:description" content="Discover verified students seeking education funding. Browse profiles and support their academic journey through blockchain-backed scholarships." />
+        <meta property="og:url" content="https://microsponsor.vercel.app/students" />
+        <meta property="og:image" content="https://microsponsor.vercel.app/og-image.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Students — MicroSponsor" />
+        <meta name="twitter:description" content="Discover verified students seeking education funding on MicroSponsor." />
+        <meta name="twitter:image" content="https://microsponsor.vercel.app/og-image.png" />
       </Head>
 
       <Header />

@@ -1,0 +1,24 @@
+{
+  "name": "MicroSponsor",
+  "short_name": "MicroSponsor",
+  "description": "Decentralized education funding powered by Stacks blockchain. Transparent, milestone-based scholarships connecting donors and students worldwide.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f0fdf4",
+  "theme_color": "#16a34a",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["finance", "education"],
+  "lang": "en-US"
+}

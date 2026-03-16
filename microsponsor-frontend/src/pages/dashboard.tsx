@@ -52,7 +52,8 @@ export default function Dashboard() {
     return (
       <div className="min-h-screen" style={{ backgroundColor: 'var(--bg)' }}>
         <Head>
-          <title>Dashboard - MicroSponsor</title>
+          <title>Dashboard — MicroSponsor</title>
+          <meta name="robots" content="noindex, nofollow" />
         </Head>
         <Header />
         <main className="max-w-7xl mx-auto py-24 px-4 text-center">
@@ -82,8 +83,9 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--bg)' }}>
       <Head>
-        <title>Dashboard - MicroSponsor</title>
+        <title>Dashboard — MicroSponsor</title>
         <meta name="description" content="MicroSponsor Dashboard" />
+        <meta name="robots" content="noindex, nofollow" />
       </Head>
 
       <Header />

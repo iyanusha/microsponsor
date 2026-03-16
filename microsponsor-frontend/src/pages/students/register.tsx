@@ -66,8 +66,21 @@ export default function RegisterStudent() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--bg)' }}>
       <Head>
-        <title>Register as Student - MicroSponsor</title>
-        <meta name="description" content="Register as a student on MicroSponsor" />
+        <title>Register as Student — MicroSponsor</title>
+        <meta name="description" content="Register as a student on MicroSponsor to receive blockchain-backed scholarships. Create your verified profile and connect with donors worldwide." />
+        <meta name="keywords" content="student registration, blockchain scholarship, register student, Stacks wallet, education funding application, decentralized scholarship" />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://microsponsor.vercel.app/students/register" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="MicroSponsor" />
+        <meta property="og:title" content="Register as Student — MicroSponsor" />
+        <meta property="og:description" content="Register as a student on MicroSponsor to receive blockchain-backed scholarships. Connect with donors worldwide." />
+        <meta property="og:url" content="https://microsponsor.vercel.app/students/register" />
+        <meta property="og:image" content="https://microsponsor.vercel.app/og-image.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Register as Student — MicroSponsor" />
+        <meta name="twitter:description" content="Create your verified student profile and receive blockchain-backed scholarships on MicroSponsor." />
+        <meta name="twitter:image" content="https://microsponsor.vercel.app/og-image.png" />
       </Head>
 
       <Header />

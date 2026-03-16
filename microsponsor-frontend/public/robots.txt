@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /scholarships/create
+
+Sitemap: https://microsponsor.vercel.app/sitemap.xml
