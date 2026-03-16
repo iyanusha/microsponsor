@@ -698,6 +698,7 @@ export default function Home() {
       <Head>
         <title>MicroSponsor — Decentralized Education Funding on Stacks</title>
         <meta name="description" content="Empower students worldwide through transparent, milestone-based scholarships powered by Stacks blockchain smart contracts." />
+        <meta name="talentapp:project_verification" content="87e8f8d71824c1c53cb1538c8150569764e5a29e02b911edf1aed5fd76d86a2948424fdfe451ab74a6bacdc5803a265ba32da9f170301008071d0cc6a3715037" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div style={{ backgroundColor: 'var(--bg)' }} className="min-h-screen">
