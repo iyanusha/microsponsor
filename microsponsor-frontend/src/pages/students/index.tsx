@@ -2,13 +2,35 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Header from '../../components/Header';
 import { useWallet } from '../../hooks/useWallet';
-import { truncateAddress } from '../../utils/helpers';
+
+function EmptyStateIllustration() {
+  return (
+    <svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-40 h-32 mx-auto mb-6">
+      {/* Graduation cap */}
+      <path d="M60 80 l40-20 40 20-40 20z" fill="var(--accent-lite)" stroke="var(--accent)" strokeWidth="1.5" />
+      <path d="M60 80 l0 16 40 16 40-16 0-16" fill="var(--accent)" fillOpacity="0.2" />
+      <line x1="140" y1="80" x2="140" y2="100" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="140" cy="104" r="4" fill="var(--accent)" />
+      {/* Person silhouettes */}
+      <circle cx="80"  cy="128" r="10" fill="var(--accent-lite)" stroke="var(--accent)" strokeWidth="1.5" />
+      <circle cx="100" cy="124" r="10" fill="var(--accent-lite)" stroke="var(--accent)" strokeWidth="1.5" />
+      <circle cx="120" cy="128" r="10" fill="var(--accent-lite)" stroke="var(--accent)" strokeWidth="1.5" />
+      <path d="M66 150 q0-16 14-16 q14 0 14 16" fill="var(--accent)" fillOpacity="0.2" />
+      <path d="M86 150 q0-14 14-14 q14 0 14 14" fill="var(--accent)" fillOpacity="0.3" />
+      <path d="M106 150 q0-16 14-16 q14 0 14 16" fill="var(--accent)" fillOpacity="0.2" />
+      {/* Stars */}
+      <circle cx="38" cy="60"  r="3" fill="var(--accent)" fillOpacity="0.6" />
+      <circle cx="162" cy="55" r="2" fill="var(--accent)" fillOpacity="0.4" />
+      <circle cx="50"  cy="40" r="2" fill="var(--accent)" fillOpacity="0.3" />
+    </svg>
+  );
+}
 
 export default function StudentsIndex() {
   const { connected } = useWallet();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg)' }}>
       <Head>
         <title>Students - MicroSponsor</title>
         <meta name="description" content="Browse MicroSponsor students" />
@@ -17,44 +39,39 @@ export default function StudentsIndex() {
       <Header />
 
       <main className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Students</h1>
-          {connected ? (
-            <Link href="/students/register" className="btn-primary text-sm">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl font-extrabold" style={{ color: 'var(--text)' }}>Students</h1>
+            <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>Verified students on MicroSponsor</p>
+          </div>
+          {connected && (
+            <Link href="/students/register" className="btn-primary">
               Register as Student
             </Link>
-          ) : null}
+          )}
         </div>
 
-        <div className="card">
-          <div className="card-body text-center py-12">
-            <svg
-              className="mx-auto h-12 w-12 text-gray-300 mb-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M12 14l9-5-9-5-9 5 9 5zm0 7l-9-5 9-5 9 5-9 5zm0-7v7"
-              />
-            </svg>
-            <p className="text-gray-500 mb-2">
-              Student directory coming soon.
-            </p>
-            <p className="text-sm text-gray-400">
-              Search by wallet address using the URL:{' '}
-              <code className="bg-gray-100 px-1 rounded text-xs">
-                /students/[address]
-              </code>
-            </p>
-            <div className="mt-6">
-              <Link href="/students/register" className="btn-secondary text-sm">
-                Register as Student
-              </Link>
-            </div>
+        <div
+          className="rounded-2xl text-center py-16 px-6"
+          style={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)' }}
+        >
+          <EmptyStateIllustration />
+          <p className="text-lg font-semibold mb-2" style={{ color: 'var(--text)' }}>
+            Student directory coming soon
+          </p>
+          <p className="text-sm mb-2" style={{ color: 'var(--text-muted)' }}>
+            Search by wallet address using the URL:
+          </p>
+          <code
+            className="text-xs px-3 py-1 rounded-lg"
+            style={{ backgroundColor: 'var(--accent-lite)', color: 'var(--accent)' }}
+          >
+            /students/[stacks-address]
+          </code>
+          <div className="mt-8">
+            <Link href="/students/register" className="btn-primary">
+              Register as Student
+            </Link>
           </div>
         </div>
       </main>

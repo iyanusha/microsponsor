@@ -8,10 +8,6 @@ import { useWallet } from '../../hooks/useWallet';
 import { registerStudent } from '../../utils/contracts';
 import { isValidStacksAddress } from '../../utils/helpers';
 
-const INPUT_CLS = `mt-1 block w-full border border-gray-300 rounded-md shadow-sm
-  py-2 px-3 text-sm focus:outline-none
-  focus:ring-indigo-500 focus:border-indigo-500`;
-
 const CURRENT_YEAR = new Date().getFullYear();
 
 export default function RegisterStudent() {
@@ -68,7 +64,7 @@ export default function RegisterStudent() {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg)' }}>
       <Head>
         <title>Register as Student - MicroSponsor</title>
         <meta name="description" content="Register as a student on MicroSponsor" />
@@ -76,18 +72,19 @@ export default function RegisterStudent() {
 
       <Header />
 
-      <main className="max-w-xl mx-auto py-8 px-4 sm:px-6">
-        <div className="bg-white shadow rounded-lg">
-          <div className="px-4 py-5 sm:p-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">
+      <main className="max-w-xl mx-auto py-10 px-4 sm:px-6">
+        <div className="card">
+          <div className="card-header">
+            <h1 className="text-2xl font-extrabold" style={{ color: 'var(--text)' }}>
               Register as Student
             </h1>
-            <p className="text-sm text-gray-500 mb-6">
+            <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
               Your institution must be pre-verified to register.
             </p>
-
+          </div>
+          <div className="card-body">
             {errors.form && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-700">
+              <div className="mb-5 p-4 rounded-xl text-sm" style={{ backgroundColor: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca' }}>
                 {errors.form}
               </div>
             )}
@@ -97,7 +94,7 @@ export default function RegisterStudent() {
                 <input
                   id="name"
                   type="text"
-                  className={INPUT_CLS}
+                  className="input mt-1"
                   value={formData.name}
                   onChange={(e) => update('name', e.target.value)}
                   maxLength={50}
@@ -114,7 +111,7 @@ export default function RegisterStudent() {
                 <input
                   id="institution"
                   type="text"
-                  className={INPUT_CLS}
+                  className="input mt-1"
                   value={formData.institution}
                   onChange={(e) => update('institution', e.target.value)}
                   maxLength={100}
@@ -126,7 +123,7 @@ export default function RegisterStudent() {
                 <input
                   id="program"
                   type="text"
-                  className={INPUT_CLS}
+                  className="input mt-1"
                   value={formData.program}
                   onChange={(e) => update('program', e.target.value)}
                   maxLength={50}
@@ -139,7 +136,7 @@ export default function RegisterStudent() {
                   <input
                     id="academicYear"
                     type="number"
-                    className={INPUT_CLS}
+                    className="input mt-1"
                     value={formData.academicYear}
                     onChange={(e) => update('academicYear', e.target.value)}
                     min="2020"
@@ -157,7 +154,7 @@ export default function RegisterStudent() {
                   <input
                     id="emergencyContact"
                     type="text"
-                    className={INPUT_CLS}
+                    className="input mt-1"
                     value={formData.emergencyContact}
                     onChange={(e) => update('emergencyContact', e.target.value)}
                     placeholder="ST..."
@@ -170,9 +167,9 @@ export default function RegisterStudent() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`btn-primary ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`btn-primary px-8 py-3 rounded-xl ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                  {loading ? 'Registering...' : 'Register'}
+                  {loading ? 'Registering…' : 'Register'}
                 </button>
               </div>
             </form>

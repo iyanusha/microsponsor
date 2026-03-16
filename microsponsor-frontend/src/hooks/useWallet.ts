@@ -1,8 +1,15 @@
 import { useState, useCallback, useEffect } from 'react';
 import { AppConfig, UserSession, showConnect } from '@stacks/connect';
 
-const appConfig = new AppConfig(['store_write', 'publish_data']);
-export const userSession = new UserSession({ appConfig });
+let _appConfig: AppConfig | null = null;
+let _userSession: UserSession | null = null;
+
+function getSession(): UserSession | null {
+  if (typeof window === 'undefined') return null;
+  if (!_appConfig) _appConfig = new AppConfig(['store_write', 'publish_data']);
+  if (!_userSession) _userSession = new UserSession({ appConfig: _appConfig });
+  return _userSession;
+}
 
 export interface WalletState {
   connected: boolean;
@@ -18,8 +25,9 @@ export function useWallet(): WalletState {
   const [mainnetAddress, setMainnetAddress] = useState('');
 
   useEffect(() => {
-    if (userSession.isUserSignedIn()) {
-      const data = userSession.loadUserData();
+    const session = getSession();
+    if (session?.isUserSignedIn()) {
+      const data = session.loadUserData();
       setConnected(true);
       setAddress(data.profile.stxAddress.testnet);
       setMainnetAddress(data.profile.stxAddress.mainnet);
@@ -27,6 +35,8 @@ export function useWallet(): WalletState {
   }, []);
 
   const connect = useCallback(() => {
+    const session = getSession();
+    if (!session) return;
     showConnect({
       appDetails: {
         name: process.env.NEXT_PUBLIC_APP_NAME || 'MicroSponsor',
@@ -34,19 +44,19 @@ export function useWallet(): WalletState {
       },
       redirectTo: '/',
       onFinish: () => {
-        if (userSession.isUserSignedIn()) {
-          const data = userSession.loadUserData();
+        if (session.isUserSignedIn()) {
+          const data = session.loadUserData();
           setConnected(true);
           setAddress(data.profile.stxAddress.testnet);
           setMainnetAddress(data.profile.stxAddress.mainnet);
         }
       },
-      userSession,
+      userSession: session,
     });
   }, []);
 
   const disconnect = useCallback(() => {
-    userSession.signUserOut('/');
+    getSession()?.signUserOut('/');
     setConnected(false);
     setAddress('');
     setMainnetAddress('');
