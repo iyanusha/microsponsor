@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { openContractCall } from '@stacks/connect';
 import { standardPrincipalCV, uintCV, stringAsciiCV, PostConditionMode } from '@stacks/transactions';
 import { useWallet } from '../hooks/useWallet';
 import { getNetwork } from '../utils/contracts';
@@ -36,6 +35,8 @@ const ScholarshipForm = ({ onSuccess }: { onSuccess?: () => void }) => {
 
     setLoading(true);
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { openContractCall } = require('@stacks/connect');
       const amountMicro = Math.floor(Number(formData.amount) * 1_000_000);
       await openContractCall({
         network: getNetwork(),

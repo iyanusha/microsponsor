@@ -2,7 +2,6 @@ import { useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Header from '../../components/Header';
-import { openContractCall } from '@stacks/connect';
 import {
   standardPrincipalCV,
   uintCV,
@@ -41,6 +40,8 @@ export default function CreateScholarship() {
       return;
     }
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { openContractCall } = require('@stacks/connect');
       const network = getNetwork();
       const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
         'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
@@ -63,7 +64,7 @@ export default function CreateScholarship() {
         functionName: 'create-scholarship',
         functionArgs,
         postConditionMode: PostConditionMode.Allow,
-        onFinish: (data) => {
+        onFinish: (data: any) => {
           console.log('Transaction:', data);
           setLoading(false);
           setSuccess(true);

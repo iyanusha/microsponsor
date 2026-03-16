@@ -1,13 +1,17 @@
 import { useState, useCallback, useEffect } from 'react';
-import { AppConfig, UserSession, showConnect } from '@stacks/connect';
 
-let _appConfig: AppConfig | null = null;
-let _userSession: UserSession | null = null;
+// Lazy singleton — require() inside a function is never executed during SSR,
+// keeping @stacks/connect entirely out of the server bundle.
+let _userSession: any = null;
 
-function getSession(): UserSession | null {
+function getSession(): any {
   if (typeof window === 'undefined') return null;
-  if (!_appConfig) _appConfig = new AppConfig(['store_write', 'publish_data']);
-  if (!_userSession) _userSession = new UserSession({ appConfig: _appConfig });
+  if (!_userSession) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { AppConfig, UserSession } = require('@stacks/connect');
+    const cfg = new AppConfig(['store_write', 'publish_data']);
+    _userSession = new UserSession({ appConfig: cfg });
+  }
   return _userSession;
 }
 
@@ -37,6 +41,8 @@ export function useWallet(): WalletState {
   const connect = useCallback(() => {
     const session = getSession();
     if (!session) return;
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { showConnect } = require('@stacks/connect');
     showConnect({
       appDetails: {
         name: process.env.NEXT_PUBLIC_APP_NAME || 'MicroSponsor',
