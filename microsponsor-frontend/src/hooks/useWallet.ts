@@ -1,14 +1,18 @@
 import { useState, useCallback, useEffect } from 'react';
 
-// Lazy singleton — require() inside a function is never executed during SSR,
-// keeping @stacks/connect entirely out of the server bundle.
+// Module-level conditional require. Turbopack evaluates typeof window at
+// build time: server bundle → branch is dead code, @stacks/connect never
+// bundled server-side. Client bundle → branch is live, module is bundled
+// synchronously (no async chunk, no "module factory not available" error).
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const stacksConnect = typeof window !== 'undefined' ? require('@stacks/connect') : null;
+
 let _userSession: any = null;
 
 function getSession(): any {
-  if (typeof window === 'undefined') return null;
+  if (!stacksConnect) return null;
   if (!_userSession) {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { AppConfig, UserSession } = require('@stacks/connect');
+    const { AppConfig, UserSession } = stacksConnect;
     const cfg = new AppConfig(['store_write', 'publish_data']);
     _userSession = new UserSession({ appConfig: cfg });
   }
@@ -40,10 +44,8 @@ export function useWallet(): WalletState {
 
   const connect = useCallback(() => {
     const session = getSession();
-    if (!session) return;
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { showConnect } = require('@stacks/connect');
-    showConnect({
+    if (!session || !stacksConnect) return;
+    stacksConnect.showConnect({
       appDetails: {
         name: process.env.NEXT_PUBLIC_APP_NAME || 'MicroSponsor',
         icon: `${process.env.NEXT_PUBLIC_APP_URL || ''}/favicon.ico`,

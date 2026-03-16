@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { standardPrincipalCV, uintCV, stringAsciiCV, PostConditionMode } from '@stacks/transactions';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const _openContractCall: typeof import('@stacks/connect')['openContractCall'] | null =
+  typeof window !== 'undefined' ? require('@stacks/connect').openContractCall : null;
 import { useWallet } from '../hooks/useWallet';
 import { getNetwork } from '../utils/contracts';
 import { isValidStacksAddress } from '../utils/helpers';
@@ -35,10 +38,8 @@ const ScholarshipForm = ({ onSuccess }: { onSuccess?: () => void }) => {
 
     setLoading(true);
     try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { openContractCall } = require('@stacks/connect');
       const amountMicro = Math.floor(Number(formData.amount) * 1_000_000);
-      await openContractCall({
+      await _openContractCall!({
         network: getNetwork(),
         anchorMode: 1,
         contractAddress: CONTRACT_ADDRESS,

@@ -8,6 +8,9 @@ import {
   stringAsciiCV,
   PostConditionMode,
 } from '@stacks/transactions';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const _openContractCall: typeof import('@stacks/connect')['openContractCall'] | null =
+  typeof window !== 'undefined' ? require('@stacks/connect').openContractCall : null;
 import { useWallet } from '../../hooks/useWallet';
 import { getNetwork } from '../../utils/contracts';
 import { isValidStacksAddress } from '../../utils/helpers';
@@ -40,8 +43,6 @@ export default function CreateScholarship() {
       return;
     }
     try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { openContractCall } = require('@stacks/connect');
       const network = getNetwork();
       const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
         'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
@@ -56,7 +57,7 @@ export default function CreateScholarship() {
         stringAsciiCV(formData.category)
       ];
 
-      await openContractCall({
+      await _openContractCall!({
         network,
         anchorMode: 1,
         contractAddress,

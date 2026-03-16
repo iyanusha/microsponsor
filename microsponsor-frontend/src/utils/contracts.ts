@@ -7,11 +7,16 @@ import {
   PostConditionMode,
 } from '@stacks/transactions';
 
-// openContractCall is browser-only — loaded lazily to keep @stacks/connect
-// out of the SSR bundle entirely.
+// Module-level conditional require — same pattern as useWallet.ts.
+// Turbopack eliminates this from the server bundle (typeof window → false),
+// and bundles it synchronously in the client bundle (typeof window → true).
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const _openContractCall: typeof import('@stacks/connect')['openContractCall'] | null =
+  typeof window !== 'undefined' ? require('@stacks/connect').openContractCall : null;
+
 function getOpenContractCall(): typeof import('@stacks/connect')['openContractCall'] {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  return require('@stacks/connect').openContractCall;
+  if (!_openContractCall) throw new Error('openContractCall is only available in the browser');
+  return _openContractCall;
 }
 
 const isMainnet = process.env.NEXT_PUBLIC_NETWORK === 'mainnet';
