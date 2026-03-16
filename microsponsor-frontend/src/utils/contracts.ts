@@ -7,18 +7,6 @@ import {
   PostConditionMode,
 } from '@stacks/transactions';
 
-// Module-level conditional require — same pattern as useWallet.ts.
-// Turbopack eliminates this from the server bundle (typeof window → false),
-// and bundles it synchronously in the client bundle (typeof window → true).
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const _openContractCall: typeof import('@stacks/connect')['openContractCall'] | null =
-  typeof window !== 'undefined' ? require('@stacks/connect').openContractCall : null;
-
-function getOpenContractCall(): typeof import('@stacks/connect')['openContractCall'] {
-  if (!_openContractCall) throw new Error('openContractCall is only available in the browser');
-  return _openContractCall;
-}
-
 const isMainnet = process.env.NEXT_PUBLIC_NETWORK === 'mainnet';
 
 export const getNetwork = (): StacksNetwork => {
@@ -151,17 +139,21 @@ export const getStudentMetrics = async (address: string) => {
   }
 };
 
-// ── Write functions (client-only via lazy require) ────────────────────────
+// ── Write functions (client-only via dynamic import) ──────────────────────
+// Using import() keeps @stacks/connect in a dedicated async chunk and prevents
+// Turbopack from creating a shared async chunk that the sync main bundle
+// cannot access synchronously ("module factory not available" error).
 
-export const registerStudent = (
+export const registerStudent = async (
   name: string,
   institution: string,
   emergencyContact: string,
   program: string,
   academicYear: number,
   opts: { onFinish: (data: any) => void; onCancel: () => void }
-) =>
-  getOpenContractCall()({
+) => {
+  const { openContractCall } = await import('@stacks/connect');
+  return openContractCall({
     network: getNetwork(),
     anchorMode: 1,
     contractAddress: CONTRACT_ADDRESS,
@@ -177,14 +169,16 @@ export const registerStudent = (
     postConditionMode: PostConditionMode.Allow,
     ...opts,
   });
+};
 
-export const addMilestone = (
+export const addMilestone = async (
   scholarshipId: number,
   description: string,
   amount: number,
   opts: { onFinish: (data: any) => void; onCancel: () => void }
-) =>
-  getOpenContractCall()({
+) => {
+  const { openContractCall } = await import('@stacks/connect');
+  return openContractCall({
     network: getNetwork(),
     anchorMode: 1,
     contractAddress: CONTRACT_ADDRESS,
@@ -198,13 +192,15 @@ export const addMilestone = (
     postConditionMode: PostConditionMode.Allow,
     ...opts,
   });
+};
 
-export const verifyMilestone = (
+export const verifyMilestone = async (
   scholarshipId: number,
   milestoneId: number,
   opts: { onFinish: (data: any) => void; onCancel: () => void }
-) =>
-  getOpenContractCall()({
+) => {
+  const { openContractCall } = await import('@stacks/connect');
+  return openContractCall({
     network: getNetwork(),
     anchorMode: 1,
     contractAddress: CONTRACT_ADDRESS,
@@ -214,14 +210,16 @@ export const verifyMilestone = (
     postConditionMode: PostConditionMode.Allow,
     ...opts,
   });
+};
 
-export const completeMilestone = (
+export const completeMilestone = async (
   scholarshipId: number,
   milestoneId: number,
   evidence: string,
   opts: { onFinish: (data: any) => void; onCancel: () => void }
-) =>
-  getOpenContractCall()({
+) => {
+  const { openContractCall } = await import('@stacks/connect');
+  return openContractCall({
     network: getNetwork(),
     anchorMode: 1,
     contractAddress: CONTRACT_ADDRESS,
@@ -235,3 +233,4 @@ export const completeMilestone = (
     postConditionMode: PostConditionMode.Allow,
     ...opts,
   });
+};

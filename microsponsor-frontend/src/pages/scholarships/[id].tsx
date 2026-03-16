@@ -77,10 +77,10 @@ export default function ScholarshipDetail() {
 
   useEffect(() => { load(); }, [scholarshipId]);
 
-  const handleComplete = (milestoneId: number) => {
+  const handleComplete = async (milestoneId: number) => {
     const evidence = prompt('Enter evidence URL or description:');
     if (!evidence) return;
-    completeMilestone(scholarshipId, milestoneId, evidence, {
+    await completeMilestone(scholarshipId, milestoneId, evidence, {
       onFinish: () => load(),
       onCancel: () => {},
     });
@@ -91,7 +91,7 @@ export default function ScholarshipDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen" style={{ backgroundColor: 'var(--bg)' }}>
         <Header />
         <div className="flex justify-center items-center h-64">
           <Spinner size="lg" />
@@ -102,20 +102,21 @@ export default function ScholarshipDetail() {
 
   if (!scholarship) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen" style={{ backgroundColor: 'var(--bg)' }}>
         <Head><title>Not Found - MicroSponsor</title></Head>
         <Header />
         <main className="max-w-2xl mx-auto py-16 text-center">
-          <p className="text-gray-500">Scholarship #{scholarshipId} not found.</p>
+          <p style={{ color: 'var(--text-muted)' }}>Scholarship #{scholarshipId} not found.</p>
         </main>
       </div>
     );
   }
 
   const progress = calculateProgress(scholarship.completedMilestones, scholarship.milestoneCount);
+  void progress;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg)' }}>
       <Head>
         <title>Scholarship #{scholarshipId} - MicroSponsor</title>
       </Head>
@@ -124,10 +125,10 @@ export default function ScholarshipDetail() {
         <div className="card mb-6">
           <div className="card-header flex items-center justify-between">
             <div>
-              <p className="text-xs text-gray-400 uppercase tracking-wide">
+              <p className="text-xs uppercase tracking-wide" style={{ color: 'var(--text-muted)' }}>
                 {formatCategory(scholarship.category)}
               </p>
-              <h1 className="text-xl font-bold text-gray-900 mt-0.5">
+              <h1 className="text-xl font-bold mt-0.5" style={{ color: 'var(--text)' }}>
                 Scholarship #{scholarshipId}
               </h1>
             </div>
@@ -136,37 +137,37 @@ export default function ScholarshipDetail() {
           <div className="card-body space-y-3 text-sm">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-gray-400">Student</p>
-                <p className="font-mono text-gray-800">{truncateAddress(scholarship.student)}</p>
+                <p style={{ color: 'var(--text-muted)' }}>Student</p>
+                <p className="font-mono" style={{ color: 'var(--text)' }}>{truncateAddress(scholarship.student)}</p>
               </div>
               <div>
-                <p className="text-gray-400">Donor</p>
-                <p className="font-mono text-gray-800">{truncateAddress(scholarship.donor)}</p>
+                <p style={{ color: 'var(--text-muted)' }}>Donor</p>
+                <p className="font-mono" style={{ color: 'var(--text)' }}>{truncateAddress(scholarship.donor)}</p>
               </div>
               <div>
-                <p className="text-gray-400">Total Amount</p>
-                <p className="font-semibold text-gray-900">{formatSTX(scholarship.amount)}</p>
+                <p style={{ color: 'var(--text-muted)' }}>Total Amount</p>
+                <p className="font-semibold" style={{ color: 'var(--text)' }}>{formatSTX(scholarship.amount)}</p>
               </div>
               <div>
-                <p className="text-gray-400">Released</p>
-                <p className="font-semibold text-green-600">{formatSTX(scholarship.releasedAmount)}</p>
+                <p style={{ color: 'var(--text-muted)' }}>Released</p>
+                <p className="font-semibold" style={{ color: 'var(--accent)' }}>{formatSTX(scholarship.releasedAmount)}</p>
               </div>
             </div>
             <ProgressBar
-                completed={scholarship.completedMilestones}
-                total={scholarship.milestoneCount}
-                label={`${scholarship.completedMilestones}/${scholarship.milestoneCount} milestones`}
-              />
+              completed={scholarship.completedMilestones}
+              total={scholarship.milestoneCount}
+              label={`${scholarship.completedMilestones}/${scholarship.milestoneCount} milestones`}
+            />
           </div>
         </div>
 
         <div className="card">
           <div className="card-header">
-            <h2 className="text-base font-semibold text-gray-900">Milestones</h2>
+            <h2 className="text-base font-semibold" style={{ color: 'var(--text)' }}>Milestones</h2>
           </div>
           <div className="card-body">
             {milestones.length === 0 ? (
-              <p className="text-gray-400 text-sm">No milestones added yet.</p>
+              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>No milestones added yet.</p>
             ) : (
               milestones.map((m) => (
                 <MilestoneCard

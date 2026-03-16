@@ -47,8 +47,13 @@ const MilestoneForm = ({ scholarshipId, onSuccess }: MilestoneFormProps) => {
   };
 
   return (
-    <div className="border border-gray-200 rounded-lg p-4 mt-4">
-      <h4 className="text-sm font-semibold text-gray-700 mb-3">Add Milestone</h4>
+    <div
+      className="rounded-lg p-4 mt-4"
+      style={{ border: '1px solid var(--border)' }}
+    >
+      <h4 className="text-sm font-semibold mb-3" style={{ color: 'var(--text)' }}>
+        Add Milestone
+      </h4>
       {error && <ErrorBanner message={error} onDismiss={() => setError('')} />}
       <form onSubmit={handleSubmit} className="space-y-3">
         <div>

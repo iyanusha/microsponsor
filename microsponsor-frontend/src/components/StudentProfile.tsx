@@ -54,9 +54,13 @@ const StudentProfile = ({ address: propAddress }: { address?: string }) => {
 
   if (notFound) {
     return (
-      <div className="card card-body text-center text-gray-500 text-sm">
+      <div className="card card-body text-center text-sm" style={{ color: 'var(--text-muted)' }}>
         <p>No student profile for {truncateAddress(address)}.</p>
-        <Link href="/students/register" className="text-indigo-600 hover:underline mt-2 block">
+        <Link
+          href="/students/register"
+          className="mt-2 block hover:underline"
+          style={{ color: 'var(--accent)' }}
+        >
           Register as a student →
         </Link>
       </div>
@@ -70,25 +74,34 @@ const StudentProfile = ({ address: propAddress }: { address?: string }) => {
       <div className="card-body">
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-base font-bold text-gray-900">{student.name}</h2>
-            <p className="text-gray-500 text-sm mt-0.5">
+            <h2 className="text-base font-bold" style={{ color: 'var(--text)' }}>
+              {student.name}
+            </h2>
+            <p className="text-sm mt-0.5" style={{ color: 'var(--text-muted)' }}>
               {student.institution} — {student.program}
             </p>
-            <p className="text-gray-400 text-xs mt-0.5 font-mono">
+            <p className="text-xs mt-0.5 font-mono" style={{ color: 'var(--text-muted)' }}>
               {truncateAddress(address)}
             </p>
           </div>
           <StatusBadge status={student.verified ? 'active' : 'pending'} />
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mt-4 pt-3 border-t border-gray-100 text-sm">
+        <div
+          className="grid grid-cols-2 gap-4 mt-4 pt-3 text-sm"
+          style={{ borderTop: '1px solid var(--border)' }}
+        >
           <div>
-            <p className="text-xs text-gray-400">Total Received</p>
-            <p className="font-semibold text-gray-900">{formatSTX(student.totalReceived)}</p>
+            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Total Received</p>
+            <p className="font-semibold" style={{ color: 'var(--text)' }}>
+              {formatSTX(student.totalReceived)}
+            </p>
           </div>
           <div>
-            <p className="text-xs text-gray-400">Milestones</p>
-            <p className="font-semibold text-gray-900">{student.milestonesCompleted}</p>
+            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Milestones</p>
+            <p className="font-semibold" style={{ color: 'var(--text)' }}>
+              {student.milestonesCompleted}
+            </p>
           </div>
         </div>
       </div>

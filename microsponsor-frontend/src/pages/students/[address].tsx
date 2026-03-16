@@ -61,7 +61,7 @@ export default function StudentProfile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen" style={{ backgroundColor: 'var(--bg)' }}>
         <Header />
         <div className="flex justify-center items-center h-64">
           <Spinner size="lg" />
@@ -72,11 +72,11 @@ export default function StudentProfile() {
 
   if (!student) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen" style={{ backgroundColor: 'var(--bg)' }}>
         <Head><title>Student Not Found - MicroSponsor</title></Head>
         <Header />
         <main className="max-w-2xl mx-auto py-16 text-center">
-          <p className="text-gray-500 mb-4">
+          <p className="mb-4" style={{ color: 'var(--text-muted)' }}>
             Student {truncateAddress(address)} not found.
           </p>
           <Link href="/students/register" className="btn-primary text-sm">
@@ -88,7 +88,7 @@ export default function StudentProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg)' }}>
       <Head>
         <title>{student.name} - MicroSponsor</title>
       </Head>
@@ -98,8 +98,8 @@ export default function StudentProfile() {
         <div className="card mb-6">
           <div className="card-header flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold text-gray-900">{student.name}</h1>
-              <p className="text-xs text-gray-500 font-mono mt-0.5">
+              <h1 className="text-xl font-bold" style={{ color: 'var(--text)' }}>{student.name}</h1>
+              <p className="text-xs font-mono mt-0.5" style={{ color: 'var(--text-muted)' }}>
                 {truncateAddress(address)}
               </p>
             </div>
@@ -109,27 +109,27 @@ export default function StudentProfile() {
           <div className="card-body space-y-4">
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <p className="text-gray-400">Institution</p>
-                <p className="font-medium text-gray-800">{student.institution}</p>
+                <p style={{ color: 'var(--text-muted)' }}>Institution</p>
+                <p className="font-medium" style={{ color: 'var(--text)' }}>{student.institution}</p>
               </div>
               <div>
-                <p className="text-gray-400">Program</p>
-                <p className="font-medium text-gray-800">{student.program}</p>
+                <p style={{ color: 'var(--text-muted)' }}>Program</p>
+                <p className="font-medium" style={{ color: 'var(--text)' }}>{student.program}</p>
               </div>
               <div>
-                <p className="text-gray-400">Academic Year</p>
-                <p className="font-medium text-gray-800">{student.academicYear}</p>
+                <p style={{ color: 'var(--text-muted)' }}>Academic Year</p>
+                <p className="font-medium" style={{ color: 'var(--text)' }}>{student.academicYear}</p>
               </div>
               <div>
-                <p className="text-gray-400">Total Received</p>
-                <p className="font-semibold text-green-600">
+                <p style={{ color: 'var(--text-muted)' }}>Total Received</p>
+                <p className="font-semibold" style={{ color: 'var(--accent)' }}>
                   {formatSTX(student.totalReceived)}
                 </p>
               </div>
             </div>
 
             <div>
-              <p className="text-sm text-gray-400 mb-2">Milestones Completed</p>
+              <p className="text-sm mb-2" style={{ color: 'var(--text-muted)' }}>Milestones Completed</p>
               <ProgressBar
                 completed={student.milestonesCompleted}
                 total={Math.max(student.milestonesCompleted, 1)}
@@ -142,33 +142,33 @@ export default function StudentProfile() {
         {metrics && (
           <div className="card">
             <div className="card-header">
-              <h2 className="text-base font-semibold text-gray-900">
+              <h2 className="text-base font-semibold" style={{ color: 'var(--text)' }}>
                 Academic Metrics
               </h2>
             </div>
             <div className="card-body">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-gray-400">GPA</p>
-                  <p className="font-semibold text-gray-800">
+                  <p style={{ color: 'var(--text-muted)' }}>GPA</p>
+                  <p className="font-semibold" style={{ color: 'var(--text)' }}>
                     {(metrics.gpa / 100).toFixed(2)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-gray-400">Attendance Rate</p>
-                  <p className="font-semibold text-gray-800">
+                  <p style={{ color: 'var(--text-muted)' }}>Attendance Rate</p>
+                  <p className="font-semibold" style={{ color: 'var(--text)' }}>
                     {metrics.attendanceRate}%
                   </p>
                 </div>
                 <div>
-                  <p className="text-gray-400">Courses Completed</p>
-                  <p className="font-semibold text-gray-800">
+                  <p style={{ color: 'var(--text-muted)' }}>Courses Completed</p>
+                  <p className="font-semibold" style={{ color: 'var(--text)' }}>
                     {metrics.completedCourses}
                   </p>
                 </div>
                 <div>
-                  <p className="text-gray-400">Total Credits</p>
-                  <p className="font-semibold text-gray-800">
+                  <p style={{ color: 'var(--text-muted)' }}>Total Credits</p>
+                  <p className="font-semibold" style={{ color: 'var(--text)' }}>
                     {metrics.totalCredits}
                   </p>
                 </div>

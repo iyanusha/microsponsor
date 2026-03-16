@@ -40,21 +40,31 @@ const DonorProfile = ({ address }: { address: string }) => {
   return (
     <div className="card mb-4">
       <div className="card-header">
-        <h3 className="text-base font-medium text-gray-900">Donor Summary</h3>
-        <p className="text-xs text-gray-400 font-mono mt-1">{truncateAddress(address)}</p>
+        <h3 className="text-base font-medium" style={{ color: 'var(--text)' }}>
+          Donor Summary
+        </h3>
+        <p className="text-xs font-mono mt-1" style={{ color: 'var(--text-muted)' }}>
+          {truncateAddress(address)}
+        </p>
       </div>
       <div className="card-body grid grid-cols-3 gap-4 text-center">
         <div>
-          <p className="text-xs text-gray-500">Total Donated</p>
-          <p className="text-lg font-semibold text-gray-900">{formatSTX(donor.totalDonated)}</p>
+          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Total Donated</p>
+          <p className="text-lg font-semibold" style={{ color: 'var(--text)' }}>
+            {formatSTX(donor.totalDonated)}
+          </p>
         </div>
         <div>
-          <p className="text-xs text-gray-500">Active</p>
-          <p className="text-lg font-semibold text-indigo-600">{donor.activeScholarships}</p>
+          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Active</p>
+          <p className="text-lg font-semibold" style={{ color: 'var(--accent)' }}>
+            {donor.activeScholarships}
+          </p>
         </div>
         <div>
-          <p className="text-xs text-gray-500">Completed</p>
-          <p className="text-lg font-semibold text-green-600">{donor.completedScholarships}</p>
+          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Completed</p>
+          <p className="text-lg font-semibold" style={{ color: 'var(--accent)' }}>
+            {donor.completedScholarships}
+          </p>
         </div>
       </div>
     </div>

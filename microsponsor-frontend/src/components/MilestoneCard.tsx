@@ -25,16 +25,25 @@ const MilestoneCard = ({
     : 'inactive';
 
   return (
-    <div className="flex items-start justify-between py-4 border-b border-gray-100 last:border-0">
+    <div
+      className="flex items-start justify-between py-4 last:border-0"
+      style={{ borderBottom: '1px solid var(--border)' }}
+    >
       <div className="flex items-start space-x-3">
         <div
-          className={`w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center mt-0.5 ${
-            milestone.verified
-              ? 'bg-green-100 text-green-600'
+          className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center mt-0.5"
+          style={{
+            backgroundColor: milestone.verified
+              ? 'var(--accent-lite)'
               : milestone.completed
-              ? 'bg-yellow-100 text-yellow-600'
-              : 'bg-gray-100 text-gray-400'
-          }`}
+              ? '#fef9c3'
+              : 'var(--border)',
+            color: milestone.verified
+              ? 'var(--accent)'
+              : milestone.completed
+              ? '#854d0e'
+              : 'var(--text-muted)',
+          }}
         >
           {milestone.verified ? (
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -45,8 +54,12 @@ const MilestoneCard = ({
           )}
         </div>
         <div>
-          <p className="text-sm font-medium text-gray-900">{milestone.description}</p>
-          <p className="text-xs text-gray-500 mt-0.5">{formatSTX(milestone.amount)}</p>
+          <p className="text-sm font-medium" style={{ color: 'var(--text)' }}>
+            {milestone.description}
+          </p>
+          <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
+            {formatSTX(milestone.amount)}
+          </p>
         </div>
       </div>
 

@@ -1,23 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
-
-// Module-level conditional require. Turbopack evaluates typeof window at
-// build time: server bundle → branch is dead code, @stacks/connect never
-// bundled server-side. Client bundle → branch is live, module is bundled
-// synchronously (no async chunk, no "module factory not available" error).
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const stacksConnect = typeof window !== 'undefined' ? require('@stacks/connect') : null;
-
-let _userSession: any = null;
-
-function getSession(): any {
-  if (!stacksConnect) return null;
-  if (!_userSession) {
-    const { AppConfig, UserSession } = stacksConnect;
-    const cfg = new AppConfig(['store_write', 'publish_data']);
-    _userSession = new UserSession({ appConfig: cfg });
-  }
-  return _userSession;
-}
+import { useState, useCallback, useEffect, useRef } from 'react';
 
 export interface WalletState {
   connected: boolean;
@@ -31,21 +12,35 @@ export function useWallet(): WalletState {
   const [connected, setConnected] = useState(false);
   const [address, setAddress] = useState('');
   const [mainnetAddress, setMainnetAddress] = useState('');
+  // Refs hold the lazily-loaded module and session so callbacks
+  // are stable and don't cause stale-closure issues.
+  const modRef = useRef<typeof import('@stacks/connect') | null>(null);
+  const sessionRef = useRef<any>(null);
 
   useEffect(() => {
-    const session = getSession();
-    if (session?.isUserSignedIn()) {
-      const data = session.loadUserData();
-      setConnected(true);
-      setAddress(data.profile.stxAddress.testnet);
-      setMainnetAddress(data.profile.stxAddress.mainnet);
-    }
+    // Dynamic import — runs client-side only (useEffect never runs on server).
+    // @stacks/connect lands in its own async chunk; no shared-chunk collision.
+    import('@stacks/connect').then((mod) => {
+      modRef.current = mod;
+      const { AppConfig, UserSession } = mod;
+      if (!sessionRef.current) {
+        const cfg = new AppConfig(['store_write', 'publish_data']);
+        sessionRef.current = new UserSession({ appConfig: cfg });
+      }
+      if (sessionRef.current.isUserSignedIn()) {
+        const data = sessionRef.current.loadUserData();
+        setConnected(true);
+        setAddress(data.profile.stxAddress.testnet);
+        setMainnetAddress(data.profile.stxAddress.mainnet);
+      }
+    });
   }, []);
 
   const connect = useCallback(() => {
-    const session = getSession();
-    if (!session || !stacksConnect) return;
-    stacksConnect.showConnect({
+    const mod = modRef.current;
+    const session = sessionRef.current;
+    if (!mod || !session) return;
+    mod.showConnect({
       appDetails: {
         name: process.env.NEXT_PUBLIC_APP_NAME || 'MicroSponsor',
         icon: `${process.env.NEXT_PUBLIC_APP_URL || ''}/favicon.ico`,
@@ -64,7 +59,7 @@ export function useWallet(): WalletState {
   }, []);
 
   const disconnect = useCallback(() => {
-    getSession()?.signUserOut('/');
+    sessionRef.current?.signUserOut('/');
     setConnected(false);
     setAddress('');
     setMainnetAddress('');

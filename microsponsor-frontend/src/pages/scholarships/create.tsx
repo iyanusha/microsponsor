@@ -8,9 +8,6 @@ import {
   stringAsciiCV,
   PostConditionMode,
 } from '@stacks/transactions';
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const _openContractCall: typeof import('@stacks/connect')['openContractCall'] | null =
-  typeof window !== 'undefined' ? require('@stacks/connect').openContractCall : null;
 import { useWallet } from '../../hooks/useWallet';
 import { getNetwork } from '../../utils/contracts';
 import { isValidStacksAddress } from '../../utils/helpers';
@@ -36,14 +33,13 @@ export default function CreateScholarship() {
     e.preventDefault();
     setLoading(true);
 
-    if (!connected) { connect(); return; }
+    if (!connected) { connect(); setLoading(false); return; }
     if (!isValidStacksAddress(formData.studentAddress)) {
       alert('Invalid student Stacks address');
       setLoading(false);
       return;
     }
     try {
-      const network = getNetwork();
       const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
         'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
       const contractName = 'stxmicrosponsor';
@@ -57,8 +53,10 @@ export default function CreateScholarship() {
         stringAsciiCV(formData.category)
       ];
 
-      await _openContractCall!({
-        network,
+      // Dynamic import keeps @stacks/connect out of the synchronous main bundle
+      const { openContractCall } = await import('@stacks/connect');
+      await openContractCall({
+        network: getNetwork(),
         anchorMode: 1,
         contractAddress,
         contractName,
@@ -96,7 +94,7 @@ export default function CreateScholarship() {
               Create New Scholarship
             </h1>
             <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
-              Fund a student's education journey on the Stacks blockchain.
+              Fund a student&apos;s education journey on the Stacks blockchain.
             </p>
           </div>
           <div className="card-body">
